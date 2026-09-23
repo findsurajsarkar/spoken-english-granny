@@ -15,7 +15,7 @@ export default function Plus({ username, onChange }: { username: string | null; 
     try {
       const ok = await buyPlus(plan, username ? { name: username } : undefined);
       if (ok) {
-        setMsg({ ok: true, text: 'Welcome to Granny Plus! Practise as much as you like, beta. ✨' });
+        setMsg({ ok: true, text: 'Welcome to Granny Plus! Six practices a day and every conversation are yours, beta. ✨' });
         onChange();
       }
     } catch (e) {
@@ -33,7 +33,7 @@ export default function Plus({ username, onChange }: { username: string | null; 
         </div>
         <div>
           <h1>Granny Plus</h1>
-          <p>Practise as much as you like and unlock every conversation. ₹99 a month, or pay once for life.</p>
+          <p>6 practices a day and every conversation. ₹99 a month, or pay once for life.</p>
         </div>
       </section>
 

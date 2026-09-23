@@ -4,8 +4,8 @@ export const FREE_DAILY_SESSIONS = 3;
 
 export type PlanId = 'monthly' | 'lifetime';
 
-/** Plus is "unlimited" with a generous fair-use cap, so one heavy user can't run up a huge AI bill. */
-export const PLUS_FAIR_USE_DAILY = 20;
+/** Plus members get this many practices a day (keeps AI costs predictable). */
+export const PLUS_DAILY_SESSIONS = 6;
 
 export const PLANS: Record<PlanId, { id: PlanId; name: string; price: number; per: string; days: number | null; note: string }> = {
   monthly: { id: 'monthly', name: 'Plus Monthly', price: 99, per: 'month', days: 30, note: 'Less than ₹4 a day' },
@@ -48,5 +48,5 @@ export function freeLeftToday(): number {
 }
 
 export function canPractise(): boolean {
-  return isPlus() ? sessionsToday() < PLUS_FAIR_USE_DAILY : freeLeftToday() > 0;
+  return isPlus() ? sessionsToday() < PLUS_DAILY_SESSIONS : freeLeftToday() > 0;
 }

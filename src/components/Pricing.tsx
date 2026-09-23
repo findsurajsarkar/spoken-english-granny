@@ -1,4 +1,4 @@
-import { FREE_DAILY_SESSIONS, PLANS, PLUS_FAIR_USE_DAILY, type PlanId } from '../lib/plan';
+import { FREE_DAILY_SESSIONS, PLANS, PLUS_DAILY_SESSIONS, type PlanId } from '../lib/plan';
 
 export const FREE_FEATURES = [
   `${FREE_DAILY_SESSIONS} practices a day`,
@@ -10,7 +10,7 @@ export const FREE_FEATURES = [
 ];
 
 export const PLUS_FEATURES = [
-  `Practise as much as you like (up to ${PLUS_FAIR_USE_DAILY} a day)`,
+  `${PLUS_DAILY_SESSIONS} practices a day, double the free plan`,
   'All 8 conversations: job interview, office, doctor, airport and more',
   'Everything in Free',
 ];

@@ -23,7 +23,7 @@ const FEATURES = [
 const FAQ = [
   {
     q: 'Is it really free?',
-    a: 'Yes. You get 3 practices every day for free, forever. Granny Plus (₹99 a month, or ₹2,999 once for life) lets you practise as much as you like and unlocks all the conversations.',
+    a: 'Yes. You get 3 practices every day for free, forever. Granny Plus (₹99 a month, or ₹2,999 once for life) gives you 6 practices a day and unlocks all the conversations.',
   },
   {
     q: 'Do I need an account?',

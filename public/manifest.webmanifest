@@ -1,0 +1,10 @@
+{
+  "name": "Spoken English Granny",
+  "short_name": "Granny",
+  "description": "Practise speaking English with a kind granny who never laughs at your mistakes.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fbf6ec",
+  "theme_color": "#b8322a",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

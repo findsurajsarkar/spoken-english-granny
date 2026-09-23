@@ -75,6 +75,10 @@ export async function askJSON<T>(prompt: string, careful = false): Promise<T> {
   return parseJSON<T>(text);
 }
 
+export async function askText(prompt: string): Promise<string> {
+  return chat(prompt);
+}
+
 export async function transcribe(audio: Blob): Promise<string> {
   const result = await puter().ai.speech2txt(audio, { language: 'en' });
   return (typeof result === 'string' ? result : result?.text ?? '').trim();

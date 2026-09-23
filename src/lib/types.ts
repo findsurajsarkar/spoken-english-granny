@@ -28,6 +28,11 @@ export interface Analysis {
   tip: string;
 }
 
+export interface Turn {
+  who: 'granny' | 'me';
+  text: string;
+}
+
 export interface Attempt {
   id: string;
   createdAt: string;
@@ -35,6 +40,23 @@ export interface Attempt {
   transcript: string;
   analysis: Analysis;
   lang: ExplainLang;
+  /** 'talk' attempts come from conversation mode and keep the whole chat. */
+  mode?: 'topic' | 'talk';
+  scenarioId?: string;
+  conversation?: Turn[];
+}
+
+/** Lifetime counters (history is trimmed after 60 days, these are not). */
+export interface Stats {
+  sessions: number;
+  talks: number;
+  words: number;
+  best: number;
+  mostWords: number;
+  levels: Level[];
+  interviewBest: number;
+  earlyBird: boolean;
+  nightOwl: boolean;
 }
 
 export interface Settings {

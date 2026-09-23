@@ -1,164 +1,112 @@
 import { useCallback, useEffect, useState } from 'react';
+import Badges from './components/Badges';
 import History from './components/History';
-import Home from './components/Home';
-import Practice from './components/Practice';
-import Result from './components/Result';
-import { checkEnglish, newTopic } from './lib/granny';
+import Landing from './components/Landing';
+import Plus from './components/Plus';
+import PracticeFlow from './components/PracticeFlow';
+import Talk from './components/Talk';
+import { isPlus } from './lib/plan';
 import { getUsername, isSignedIn, signIn } from './lib/puter';
-import { loadDays, loadHistory, loadSettings, recentTopicTitles, saveAttempt, saveSettings } from './lib/storage';
-import type { Attempt, Settings, Topic } from './lib/types';
+import { go, useRoute, type Route } from './lib/router';
+import { hasVisitedApp, loadDays, loadHistory, loadSettings, markVisitedApp, saveSettings } from './lib/storage';
+import type { Settings } from './lib/types';
 
-type View =
-  | { name: 'home' }
-  | { name: 'practice'; topic: Topic; key: number }
-  | { name: 'checking'; topic: Topic }
-  | { name: 'result'; attempt: Attempt; readOnly: boolean }
-  | { name: 'history' };
-
-const CHECKING_LINES = ['Granny is putting on her glasses…', 'Reading your page carefully…', 'Taking out the red pen…', 'Writing little notes for you…'];
+const TABS: Array<{ route: Route; label: string; icon: string }> = [
+  { route: '/practice', label: 'Practice', icon: '🎤' },
+  { route: '/talk', label: 'Talk', icon: '💬' },
+  { route: '/badges', label: 'Badges', icon: '🏅' },
+  { route: '/history', label: 'History', icon: '📒' },
+];
 
 export default function App() {
-  const [view, setView] = useState<View>({ name: 'home' });
+  const route = useRoute();
   const [settings, setSettings] = useState<Settings>(loadSettings);
   const [days, setDays] = useState(loadDays);
   const [history, setHistory] = useState(loadHistory);
   const [signedIn, setSignedIn] = useState(isSignedIn);
   const [username, setUsername] = useState<string | null>(null);
-  const [loadingTopic, setLoadingTopic] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [line, setLine] = useState(0);
+  const [plus, setPlus] = useState(isPlus);
+
+  // Returning learners skip the landing page when they open the bare URL.
+  useEffect(() => {
+    if (!window.location.hash && hasVisitedApp()) go('/practice');
+  }, []);
+
+  useEffect(() => {
+    if (route !== '/') markVisitedApp();
+  }, [route]);
 
   useEffect(() => {
     if (signedIn) getUsername().then(setUsername);
   }, [signedIn]);
-
-  useEffect(() => {
-    if (view.name !== 'checking') return;
-    const t = window.setInterval(() => setLine((l) => (l + 1) % CHECKING_LINES.length), 2200);
-    return () => window.clearInterval(t);
-  }, [view.name]);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [view.name]);
 
   const updateSettings = (s: Settings) => {
     setSettings(s);
     saveSettings(s);
   };
 
-  const fetchTopic = useCallback(async () => {
-    setError(null);
-    setLoadingTopic(true);
-    try {
-      const topic = await newTopic(settings.level, recentTopicTitles());
-      setView({ name: 'practice', topic, key: Date.now() });
-    } catch (e) {
-      console.error(e);
-      setError('Granny could not think of a topic just now. Please try again.');
-    } finally {
-      setLoadingTopic(false);
-    }
-  }, [settings.level]);
+  const refresh = useCallback(() => {
+    setDays(loadDays());
+    setHistory(loadHistory());
+    setPlus(isPlus());
+  }, []);
 
-  const start = async () => {
-    if (!isSignedIn()) {
-      try {
-        await signIn(); // called straight from the click, so the popup isn't blocked
-      } catch {
-        setError('Sign-in was closed. Granny needs you to sign in with Puter to use her AI.');
-        return;
-      }
-      setSignedIn(isSignedIn());
-    }
-    fetchTopic();
-  };
-
-  const check = async (topic: Topic, transcript: string) => {
-    setLine(0);
-    setError(null);
-    setView({ name: 'checking', topic });
+  /** Must run from a click so the Puter sign-in popup isn't blocked. */
+  const ensureSignedIn = useCallback(async () => {
+    if (isSignedIn()) return true;
     try {
-      const analysis = await checkEnglish(topic, transcript, settings.lang);
-      const attempt: Attempt = {
-        id: crypto.randomUUID?.() ?? String(Date.now()),
-        createdAt: new Date().toISOString(),
-        topic,
-        transcript,
-        analysis,
-        lang: settings.lang,
-      };
-      saveAttempt(attempt);
-      setDays(loadDays());
-      setHistory(loadHistory());
-      setView({ name: 'result', attempt, readOnly: false });
-    } catch (e) {
-      console.error(e);
-      setError('Granny could not check your page this time. Your topic is still here, please try again.');
-      setView({ name: 'practice', topic, key: Date.now() });
+      await signIn();
+    } catch {
+      return false;
     }
-  };
+    const ok = isSignedIn();
+    setSignedIn(ok);
+    return ok;
+  }, []);
+
+  if (route === '/') return <Landing />;
 
   return (
     <div className="app">
       <header className="topbar">
-        <button className="brand" onClick={() => setView({ name: 'home' })}>
+        <button className="brand" onClick={() => go('/practice')}>
           <img src="icon.svg" alt="" width={32} height={32} />
           <span>Spoken English Granny</span>
         </button>
-        <nav>
-          <button className={`nav-btn${view.name === 'history' ? ' on' : ''}`} onClick={() => setView({ name: 'history' })}>
-            History
-          </button>
-          {signedIn && username && <span className="user" title="Signed in with Puter">{username}</span>}
+        <nav className="top-tabs" aria-label="Main">
+          {TABS.map((t) => (
+            <button key={t.route} className={`nav-btn${route === t.route ? ' on' : ''}`} onClick={() => go(t.route)}>
+              {t.label}
+            </button>
+          ))}
         </nav>
+        <button className={`plus-btn${plus ? ' member' : ''}${route === '/plus' ? ' on' : ''}`} onClick={() => go('/plus')} title={username ? `Signed in as ${username}` : undefined}>
+          {plus ? '✨ Plus' : 'Get Plus'}
+        </button>
       </header>
 
       <main>
-        {view.name === 'home' && (
-          <Home settings={settings} onSettings={updateSettings} days={days} signedIn={signedIn} loading={loadingTopic} error={error} onStart={start} />
+        {route === '/practice' && (
+          <PracticeFlow settings={settings} onSettings={updateSettings} days={days} signedIn={signedIn} ensureSignedIn={ensureSignedIn} onSaved={refresh} />
         )}
-
-        {view.name === 'practice' && (
-          <>
-            {error && <p className="error banner">{error}</p>}
-            <Practice
-              key={view.key}
-              topic={view.topic}
-              lang={settings.lang}
-              loadingTopic={loadingTopic}
-              onNewTopic={fetchTopic}
-              onCheck={(t) => check(view.topic, t)}
-            />
-          </>
-        )}
-
-        {view.name === 'checking' && (
-          <section className="card checking">
-            <div className="pen" aria-hidden>
-              ✎
-            </div>
-            <p>{CHECKING_LINES[line]}</p>
-          </section>
-        )}
-
-        {view.name === 'result' && (
-          <Result
-            attempt={view.attempt}
-            readOnly={view.readOnly}
-            onAgain={() => setView({ name: 'practice', topic: view.attempt.topic, key: Date.now() })}
-            onNew={() => {
-              if (view.readOnly) return setView({ name: 'history' });
-              setView({ name: 'home' });
-              fetchTopic();
-            }}
-          />
-        )}
-
-        {view.name === 'history' && <History items={history} onOpen={(a) => setView({ name: 'result', attempt: a, readOnly: true })} />}
+        {route === '/talk' && <Talk settings={settings} ensureSignedIn={ensureSignedIn} onSaved={refresh} />}
+        {route === '/badges' && <Badges days={days} />}
+        {route === '/history' && <History items={history} />}
+        {route === '/plus' && <Plus username={username} onChange={refresh} />}
       </main>
 
-      <footer className="foot">Made with love · Granny never laughs at mistakes</footer>
+      <footer className="foot">
+        <a href="#/">About Granny</a> · Made with love · Granny never laughs at mistakes
+      </footer>
+
+      <nav className="bottom-tabs" aria-label="Main">
+        {TABS.map((t) => (
+          <button key={t.route} className={route === t.route ? 'on' : ''} onClick={() => go(t.route)}>
+            <span aria-hidden>{t.icon}</span>
+            {t.label}
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }

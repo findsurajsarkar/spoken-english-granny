@@ -1,26 +1,20 @@
 import { useState } from 'react';
 import { gradeFor } from '../lib/grading';
+import type { Badge } from '../lib/badges';
 import type { Attempt } from '../lib/types';
+import { canSpeak, speak } from '../lib/voice';
+import NewBadges from './NewBadges';
 import Notebook, { splitTranscript } from './Notebook';
-
-function speak(text: string) {
-  if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  const voices = window.speechSynthesis.getVoices();
-  u.voice = voices.find((v) => v.lang === 'en-IN') ?? voices.find((v) => v.lang.startsWith('en')) ?? null;
-  u.rate = 0.92;
-  window.speechSynthesis.speak(u);
-}
 
 interface Props {
   attempt: Attempt;
   onAgain: () => void;
   onNew: () => void;
   readOnly?: boolean;
+  newBadges?: Badge[];
 }
 
-export default function Result({ attempt, onAgain, onNew, readOnly }: Props) {
+export default function Result({ attempt, onAgain, onNew, readOnly, newBadges = [] }: Props) {
   const { analysis, topic, transcript } = attempt;
   const [active, setActive] = useState<number | null>(null);
   const grade = gradeFor(analysis.score);
@@ -34,6 +28,7 @@ export default function Result({ attempt, onAgain, onNew, readOnly }: Props) {
 
   return (
     <div className="result">
+      <NewBadges badges={newBadges} />
       <section className={`card report tone-${grade.tone}`}>
         <div className="marks" aria-label={`Marks: ${analysis.score} out of 10`}>
           <span className="marks-num">{analysis.score}</span>
@@ -48,6 +43,19 @@ export default function Result({ attempt, onAgain, onNew, readOnly }: Props) {
           </p>
         </div>
       </section>
+
+      {attempt.conversation && (
+        <details className="card convo-log">
+          <summary>Read the whole conversation</summary>
+          <div className="chat compact">
+            {attempt.conversation.map((t, i) => (
+              <p key={i} className={`bubble ${t.who}`}>
+                {t.text}
+              </p>
+            ))}
+          </div>
+        </details>
+      )}
 
       <Notebook title={topic.title} date={date} transcript={transcript} mistakes={analysis.mistakes} active={active} onSelect={select} />
 
@@ -78,7 +86,7 @@ export default function Result({ attempt, onAgain, onNew, readOnly }: Props) {
       <section className="card">
         <div className="row-between">
           <h2>The right way to say it</h2>
-          {'speechSynthesis' in window && (
+          {canSpeak && (
             <button className="btn ghost small" onClick={() => speak(analysis.correctedText)}>
               🔊 Listen
             </button>
@@ -110,11 +118,11 @@ export default function Result({ attempt, onAgain, onNew, readOnly }: Props) {
       <div className="actions">
         {!readOnly && (
           <button className="btn ghost" onClick={onAgain}>
-            Try this topic again
+            {attempt.mode === 'talk' ? 'Talk again' : 'Try this topic again'}
           </button>
         )}
         <button className="btn primary" onClick={onNew}>
-          {readOnly ? 'Back' : 'New topic'}
+          {readOnly ? 'Back' : attempt.mode === 'talk' ? 'Choose another conversation' : 'New topic'}
         </button>
       </div>
     </div>

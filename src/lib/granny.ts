@@ -1,6 +1,7 @@
 /* Everything Granny asks the AI lives here: new topics and checking the learner's English. */
-import { askJSON } from './puter';
-import type { Analysis, ExplainLang, Level, Mistake, Topic } from './types';
+import { askJSON, askText } from './puter';
+import type { Scenario } from './scenarios';
+import type { Analysis, ExplainLang, Level, Mistake, Topic, Turn } from './types';
 
 const TIME_RANGE: Record<Level, [number, number]> = {
   beginner: [45, 90],
@@ -133,4 +134,42 @@ Reply with ONLY this JSON, no other text:
     strengths: Array.isArray(a.strengths) ? a.strengths.map(String).slice(0, 3) : [],
     tip: String(a.tip ?? ''),
   };
+}
+
+/* ---------- conversation mode ---------- */
+
+export async function nextReply(scenario: Scenario, level: Level, turns: Turn[], turnsLeft: number): Promise<string> {
+  const history = turns.map((t) => `${t.who === 'granny' ? 'YOU' : 'LEARNER'}: ${t.text}`).join('\n');
+  const prompt = `You are helping an English learner practise SPEAKING through a role-play. They hear your reply read aloud.
+Your role: ${scenario.role}
+Learner level: ${level} (${LEVEL_GUIDE[level]})
+
+Rules:
+- Stay in your role. Be warm, patient and encouraging. Never mock.
+- Reply in 1-3 short, natural spoken sentences (max 45 words), using English that suits their level.
+- Do NOT correct their English now — Granny gives feedback at the end.
+- ${turnsLeft > 0 ? 'End with ONE simple question or prompt so they keep talking.' : 'This is the LAST reply: wrap up warmly in 1-2 sentences, with no question.'}
+- If their message is unclear or empty, kindly ask them to say it again in other words.
+
+Conversation so far:
+${history}
+
+Reply with ONLY your next line — no name label, no quotes.`;
+  const text = await askText(prompt);
+  return text.replace(/^\s*(YOU|GRANNY|ASSISTANT)\s*:\s*/i, '').replace(/^["“]|["”]$/g, '').trim();
+}
+
+/** Turns a finished conversation into a normal checked attempt (same notebook result page). */
+export function talkTopic(scenario: Scenario, level: Level): Topic {
+  return { title: scenario.title, prompt: `A spoken conversation: ${scenario.desc}`, hints: [], seconds: 60, level };
+}
+
+export function learnerText(turns: Turn[]): string {
+  return turns
+    .filter((t) => t.who === 'me')
+    .map((t) => {
+      const s = t.text.trim();
+      return /[.!?]$/.test(s) ? s : s + '.';
+    })
+    .join(' ');
 }

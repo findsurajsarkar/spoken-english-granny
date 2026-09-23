@@ -1,17 +1,22 @@
-import type { Attempt, Settings } from './types';
+import { BADGES, type Badge } from './badges';
 import { addDays, dayKey } from './dates';
+import { streaks } from './streak';
+import type { Attempt, Settings, Stats } from './types';
 
 const KEYS = {
   history: 'granny.history.v1',
   days: 'granny.days.v1',
   settings: 'granny.settings.v1',
+  stats: 'granny.stats.v1',
+  badges: 'granny.badges.v1',
+  visited: 'granny.visited.v1',
 };
 
 /** History is kept for this many days (and at most MAX_ATTEMPTS entries). */
 export const HISTORY_DAYS = 60;
 const MAX_ATTEMPTS = 100;
 
-function read<T>(key: string, fallback: T): T {
+export function read<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
     return raw ? (JSON.parse(raw) as T) : fallback;
@@ -20,7 +25,7 @@ function read<T>(key: string, fallback: T): T {
   }
 }
 
-function write(key: string, value: unknown) {
+export function write(key: string, value: unknown) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
@@ -36,6 +41,14 @@ export function saveSettings(s: Settings) {
   write(KEYS.settings, s);
 }
 
+export function hasVisitedApp(): boolean {
+  return read(KEYS.visited, false);
+}
+
+export function markVisitedApp() {
+  write(KEYS.visited, true);
+}
+
 export function loadHistory(): Attempt[] {
   const cutoff = addDays(new Date(), -HISTORY_DAYS).toISOString();
   return read<Attempt[]>(KEYS.history, []).filter((a) => a.createdAt >= cutoff);
@@ -46,17 +59,64 @@ export function loadDays(): Record<string, number> {
   return read<Record<string, number>>(KEYS.days, {});
 }
 
-export function saveAttempt(a: Attempt) {
-  const history = [a, ...loadHistory()].slice(0, MAX_ATTEMPTS);
-  write(KEYS.history, history);
+export function sessionsToday(): number {
+  return loadDays()[dayKey()] ?? 0;
+}
+
+const EMPTY_STATS: Stats = { sessions: 0, talks: 0, words: 0, best: 0, mostWords: 0, levels: [], interviewBest: 0, earlyBird: false, nightOwl: false };
+
+export function loadStats(): Stats {
+  return { ...EMPTY_STATS, ...read<Partial<Stats>>(KEYS.stats, {}) };
+}
+
+/** Badge id -> ISO date it was earned. */
+export function loadEarned(): Record<string, string> {
+  return read<Record<string, string>>(KEYS.badges, {});
+}
+
+function awardBadges(): Badge[] {
+  const stats = loadStats();
+  const { longest } = streaks(loadDays());
+  const earned = loadEarned();
+  const fresh = BADGES.filter((b) => !earned[b.id] && b.progress(stats, longest) >= 1);
+  const now = new Date().toISOString();
+  fresh.forEach((b) => (earned[b.id] = now));
+  if (fresh.length) write(KEYS.badges, earned);
+  return fresh;
+}
+
+/** Saves the attempt, updates streak days and lifetime stats, and returns any newly earned badges. */
+export function saveAttempt(a: Attempt): Badge[] {
+  write(KEYS.history, [a, ...loadHistory()].slice(0, MAX_ATTEMPTS));
+
+  const created = new Date(a.createdAt);
   const days = loadDays();
-  const k = dayKey(new Date(a.createdAt));
+  const k = dayKey(created);
   days[k] = (days[k] ?? 0) + 1;
   write(KEYS.days, days);
+
+  const s = loadStats();
+  const words = a.transcript.split(/\s+/).filter(Boolean).length;
+  const hour = created.getHours();
+  const next: Stats = {
+    sessions: s.sessions + 1,
+    talks: s.talks + (a.mode === 'talk' ? 1 : 0),
+    words: s.words + words,
+    best: Math.max(s.best, a.analysis.score),
+    mostWords: Math.max(s.mostWords, words),
+    levels: s.levels.includes(a.topic.level) ? s.levels : [...s.levels, a.topic.level],
+    interviewBest: a.scenarioId === 'interview' ? Math.max(s.interviewBest, a.analysis.score) : s.interviewBest,
+    earlyBird: s.earlyBird || hour < 8,
+    nightOwl: s.nightOwl || hour >= 22,
+  };
+  write(KEYS.stats, next);
+
+  return awardBadges();
 }
 
 export function recentTopicTitles(n = 15): string[] {
   return loadHistory()
+    .filter((a) => a.mode !== 'talk')
     .slice(0, n)
     .map((a) => a.topic.title);
 }

@@ -1090,7 +1090,7 @@ a {
 }
 
 @media (max-width: 720px) {
-  .top-tabs {
+  .topbar .top-tabs {
     display: none;
   }
   .app {
@@ -1244,7 +1244,7 @@ a {
 
 .scenario-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 12px;
 }
 
@@ -1525,7 +1525,7 @@ a {
 
 .badge-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
   gap: 10px;
   margin-top: 14px;
 }
@@ -1799,12 +1799,12 @@ a {
   font-family: var(--pen);
   font-size: 2.8rem;
   font-weight: 700;
-  display: grid;
-  place-items: center;
-  grid-auto-flow: column;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
   line-height: 1;
   transform: rotate(-10deg);
-  padding-top: 8px;
+  padding-top: 22px;
 }
 
 .l-mark span {

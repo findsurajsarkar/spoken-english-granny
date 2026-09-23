@@ -23,7 +23,9 @@ const KEY = 'granny.plus.v1';
 
 export function plusState(): PlusState | null {
   const s = read<PlusState | null>(KEY, null);
-  return s && s.until > new Date().toISOString() ? s : null;
+  if (!s || s.until <= new Date().toISOString()) return null;
+  // Memberships from plans that no longer exist (e.g. the old yearly plan) still count.
+  return s.plan in PLANS ? s : { ...s, plan: 'monthly' };
 }
 
 export function isPlus(): boolean {

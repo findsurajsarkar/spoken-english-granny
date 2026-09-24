@@ -23,8 +23,8 @@ const PAGES: Record<string, { title: string; body: ReactNode }> = {
         <h2>What we collect</h2>
         <ul>
           <li>
-            <strong>Your account:</strong> when you sign in (with Google, through Puter), we receive your Puter username. We do not receive your Google
-            password.
+            <strong>Your account:</strong> when you start, Puter (which runs Granny's AI) creates a free guest account for you, or you sign in with
+            Google through Puter. We receive only your Puter username, never your Google password.
           </li>
           <li>
             <strong>What you say:</strong> the text of your answers and conversations, and Granny's corrections, marks and remarks.

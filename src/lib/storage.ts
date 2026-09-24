@@ -125,6 +125,7 @@ export function recentTopicTitles(n = 15): string[] {
 
 export const PLUS_KEY = 'granny.plus.v1';
 const OWNER_KEY = 'granny.owner.v1';
+const OWNER_GUEST_KEY = 'granny.ownerGuest.v1';
 
 export interface Snapshot {
   history: Attempt[];
@@ -157,7 +158,7 @@ export function importLocal(s: Snapshot) {
 
 /** Removes the learner's progress from this device (it stays safe in their account). */
 export function clearLocal() {
-  [KEYS.history, KEYS.days, KEYS.stats, KEYS.badges, PLUS_KEY, OWNER_KEY].forEach((k) => {
+  [KEYS.history, KEYS.days, KEYS.stats, KEYS.badges, PLUS_KEY, OWNER_KEY, OWNER_GUEST_KEY].forEach((k) => {
     try {
       localStorage.removeItem(k);
     } catch {
@@ -171,6 +172,12 @@ export function localOwner(): string | null {
   return read<string | null>(OWNER_KEY, null);
 }
 
-export function setLocalOwner(username: string) {
+/** True if the progress on this device was made with a temporary guest account. */
+export function localOwnerWasGuest(): boolean {
+  return read<boolean>(OWNER_GUEST_KEY, false);
+}
+
+export function setLocalOwner(username: string, guest = false) {
   write(OWNER_KEY, username);
+  write(OWNER_GUEST_KEY, guest);
 }

@@ -29,10 +29,28 @@ export function isSignedIn(): boolean {
   }
 }
 
-/** Must be called directly from a click handler, otherwise the browser blocks the popup. */
-export async function signIn(): Promise<void> {
+/**
+ * Must be called directly from a click handler, otherwise the browser blocks the popup.
+ * guest: Puter creates a free temporary account in one tap (no sign-up form).
+ * pickAccount: always let the learner choose an account (used for "Save progress with Google").
+ */
+export async function signIn(opts: { guest?: boolean; pickAccount?: boolean } = {}): Promise<void> {
   if (isDemo()) return;
-  await puter().auth.signIn();
+  await puter().auth.signIn({
+    attempt_temp_user_creation: Boolean(opts.guest),
+    ...(opts.pickAccount ? { request_auth: true } : {}),
+  });
+}
+
+/** The signed-in Puter account, and whether it is a temporary guest account. */
+export async function getAccount(): Promise<{ username: string | null; guest: boolean }> {
+  if (isDemo()) return { username: 'priya', guest: false };
+  try {
+    const user = await puter().auth.getUser();
+    return { username: user?.username ?? null, guest: Boolean(user?.is_temp ?? user?.isTemp ?? user?.is_temporary) };
+  } catch {
+    return { username: null, guest: false };
+  }
 }
 
 export async function signOut(): Promise<void> {
@@ -51,13 +69,7 @@ export function kv() {
 }
 
 export async function getUsername(): Promise<string | null> {
-  if (isDemo()) return 'priya';
-  try {
-    const user = await puter().auth.getUser();
-    return user?.username ?? null;
-  } catch {
-    return null;
-  }
+  return (await getAccount()).username;
 }
 
 function textOf(resp: any): string {
@@ -101,6 +113,15 @@ export async function askText(prompt: string): Promise<string> {
 }
 
 export async function transcribe(audio: Blob): Promise<string> {
-  const result = await puter().ai.speech2txt(audio, { language: 'en' });
+  if (isDemo()) return 'Last Diwali I go to my grandmother village.';
+  // Give the file a name/extension that matches the phone's recording format (webm, mp4 or ogg).
+  const type = audio.type || 'audio/webm';
+  const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
+  const file = new File([audio], `speech.${ext}`, { type: type.split(';')[0] });
+  const result = await puter().ai.speech2txt(file, {
+    language: 'en',
+    // Keep the learner's own words, mistakes included: Granny needs to see them.
+    prompt: 'Transcribe exactly what the speaker says, word for word. Keep grammar mistakes and Indian English as spoken. Do not correct anything.',
+  });
   return (typeof result === 'string' ? result : result?.text ?? '').trim();
 }

@@ -65,11 +65,11 @@ export default function Home({ settings, onSettings, days, signedIn, loading, er
         </div>
 
         <button className="btn primary big" onClick={onStart} disabled={loading}>
-          {loading ? 'Granny is thinking of a topic…' : signedIn ? 'Give me a topic' : 'Sign in & start'}
+          {loading ? 'Granny is thinking of a topic…' : signedIn ? 'Give me a topic' : 'Start now, free'}
         </button>
         {!signedIn && (
           <p className="muted small center">
-            Free: sign in once with Google (through Puter, which runs Granny's AI). Your progress is saved to your account.
+            No sign-up needed: one tap creates your free account (Granny's AI runs on Puter). You can save your progress with Google any time.
           </p>
         )}
         {error && <p className="error center">{error}</p>}

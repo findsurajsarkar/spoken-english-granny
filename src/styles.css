@@ -2517,3 +2517,20 @@ a {
   letter-spacing: 0.08em;
   border-radius: 999px;
 }
+
+/* mic sound level: the ring glows as Granny hears you */
+.mic.on {
+  box-shadow: 0 0 0 calc(var(--lvl, 0) * 26px) rgba(200, 52, 43, 0.18);
+  transition: box-shadow 0.08s linear;
+}
+
+.hearing {
+  color: var(--muted);
+  font-family: var(--ui);
+  font-size: 0.95rem;
+}
+
+.hearing.on {
+  color: var(--green);
+  font-weight: 700;
+}

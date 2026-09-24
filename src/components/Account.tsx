@@ -11,11 +11,12 @@ const SYNC_TEXT: Record<SyncState, string> = {
 interface Props {
   signedIn: boolean;
   username: string | null;
+  guest: boolean;
   onSignIn: () => void;
   onSignOut: () => void;
 }
 
-export default function Account({ signedIn, username, onSignIn, onSignOut }: Props) {
+export default function Account({ signedIn, username, guest, onSignIn, onSignOut }: Props) {
   const [open, setOpen] = useState(false);
   const [sync, setSync] = useState<SyncState>('off');
   const ref = useRef<HTMLDivElement>(null);
@@ -47,9 +48,25 @@ export default function Account({ signedIn, username, onSignIn, onSignOut }: Pro
       </button>
       {open && (
         <div className="account-menu" role="menu">
-          <p className="acc-name">{username ?? 'Signed in'}</p>
+          <p className="acc-name">{guest ? 'Guest account' : username ?? 'Signed in'}</p>
           <p className={`acc-sync sync-${sync}`}>{SYNC_TEXT[sync]}</p>
-          <p className="muted small">Your history, streaks and badges follow you to any device where you sign in.</p>
+          {guest ? (
+            <>
+              <p className="muted small">You're practising as a guest. Save your progress with Google so you never lose it, and use it on other devices.</p>
+              <button
+                className="btn primary small"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false);
+                  onSignIn();
+                }}
+              >
+                Save progress with Google
+              </button>
+            </>
+          ) : (
+            <p className="muted small">Your history, streaks and badges follow you to any device where you sign in.</p>
+          )}
           <button
             className="btn ghost small"
             role="menuitem"

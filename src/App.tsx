@@ -10,7 +10,7 @@ import PracticeFlow from './components/PracticeFlow';
 import Talk from './components/Talk';
 import { pushSummary, syncNow } from './lib/cloud';
 import { isPlus } from './lib/plan';
-import { getUsername, isSignedIn, signIn, signOut } from './lib/puter';
+import { getAccount, isSignedIn, signIn, signOut } from './lib/puter';
 import { go, LEGAL_ROUTES, useRoute, type Route } from './lib/router';
 import { clearLocal, loadDays, loadHistory, loadSettings, markVisitedApp, saveSettings } from './lib/storage';
 import type { Settings } from './lib/types';
@@ -29,6 +29,9 @@ export default function App() {
   const [history, setHistory] = useState(loadHistory);
   const [signedIn, setSignedIn] = useState(isSignedIn);
   const [username, setUsername] = useState<string | null>(null);
+  const [guest, setGuest] = useState(false);
+  // Bumped when the signed-in account changes (e.g. guest → Google) to re-run the sync.
+  const [accountVersion, setAccountVersion] = useState(0);
   const [plus, setPlus] = useState(isPlus);
 
   useEffect(() => {
@@ -46,14 +49,18 @@ export default function App() {
   useEffect(() => {
     if (!signedIn) {
       setUsername(null);
+      setGuest(false);
       return;
     }
-    getUsername().then(setUsername);
+    getAccount().then((a) => {
+      setUsername(a.username);
+      setGuest(a.guest);
+    });
     const sync = () => syncNow().then((ok) => ok && refresh());
     sync();
     window.addEventListener('online', sync);
     return () => window.removeEventListener('online', sync);
-  }, [signedIn, refresh]);
+  }, [signedIn, accountVersion, refresh]);
 
   const updateSettings = (s: Settings) => {
     setSettings(s);
@@ -61,13 +68,15 @@ export default function App() {
     void pushSummary();
   };
 
+  /** "Sign in" / "Save progress with Google": the full Puter sign-in where Google can be chosen. */
   const handleSignIn = async () => {
     try {
-      await signIn();
+      await signIn({ pickAccount: isSignedIn() });
     } catch {
       return;
     }
     setSignedIn(isSignedIn());
+    setAccountVersion((v) => v + 1);
   };
 
   const handleSignOut = async () => {
@@ -82,11 +91,11 @@ export default function App() {
     go('/practice');
   };
 
-  /** Must run from a click so the Puter sign-in popup isn't blocked. */
+  /** Must run from a click so the Puter popup isn't blocked. New learners get a one-tap guest account. */
   const ensureSignedIn = useCallback(async () => {
     if (isSignedIn()) return true;
     try {
-      await signIn();
+      await signIn({ guest: true });
     } catch {
       return false;
     }
@@ -115,7 +124,7 @@ export default function App() {
         <button className={`plus-btn${plus ? ' member' : ''}${route === '/plus' ? ' on' : ''}`} onClick={() => go('/plus')} title={username ? `Signed in as ${username}` : undefined}>
           {plus ? '✨ Plus' : 'Get Plus'}
         </button>
-        <Account signedIn={signedIn} username={username} onSignIn={handleSignIn} onSignOut={handleSignOut} />
+        <Account signedIn={signedIn} username={username} guest={guest} onSignIn={handleSignIn} onSignOut={handleSignOut} />
       </header>
 
       <main>

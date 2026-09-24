@@ -19,26 +19,40 @@ export default function Practice({ topic, lang, loadingTopic, onNewTopic, onChec
   const [transcribing, setTranscribing] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [typing, setTyping] = useState(false);
+  const [detail, setDetail] = useState<string | null>(null);
 
-  const runPuterTranscription = async (blob: Blob) => {
+  const runPuterTranscription = async (blob: Blob, fallback = '', silent = false) => {
     setTranscribing(true);
     setErr(null);
+    setDetail(null);
     try {
       const text = await transcribe(blob);
-      setTranscript(text);
-      if (!text) setErr("Granny couldn't hear any words. Try again a little closer to the mic.");
+      setTranscript(text || fallback);
+      if (!text && !fallback)
+        setErr(
+          silent
+            ? "Granny couldn't hear any sound. Check that the microphone isn't muted or blocked, and speak close to the phone."
+            : "Granny couldn't make out any words. Try again, speaking a little louder and closer to the phone.",
+        );
     } catch (e) {
       console.error(e);
-      setErr("Granny couldn't write down your words this time. Try again, or type your answer instead.");
+      setDetail(e instanceof Error ? e.message : String((e as any)?.error?.message ?? (e as any)?.message ?? e));
+      setTranscript(fallback);
+      if (!fallback) setErr("Granny couldn't write down your words this time. Try recording again, or type your answer.");
     } finally {
       setTranscribing(false);
     }
   };
 
-  const onFinish = ({ audio, liveText }: Recording) => {
+  const onFinish = ({ audio, liveText, silent, seconds }: Recording) => {
     setAudio(audio);
-    if (liveText) setTranscript(liveText);
-    else if (audio) runPuterTranscription(audio);
+    if (seconds < 1.5) {
+      setErr('That was very short. Tap the mic, speak for a few sentences, then tap again to finish.');
+      return;
+    }
+    // Even if the meter heard nothing, still try: some phones report very low levels.
+    if (audio) runPuterTranscription(audio, liveText, silent);
+    else setTranscript(liveText);
   };
 
   const rec = useRecorder(topic.seconds, onFinish);
@@ -84,7 +98,7 @@ export default function Practice({ topic, lang, loadingTopic, onNewTopic, onChec
           <>
             <button
               className={`mic${recording ? ' on' : ''}`}
-              style={{ ['--p' as string]: progress }}
+              style={{ ['--p' as string]: progress, ['--lvl' as string]: rec.level }}
               onClick={recording ? rec.stop : rec.start}
               aria-label={recording ? 'Stop recording' : 'Start speaking'}
             >
@@ -109,8 +123,17 @@ export default function Practice({ topic, lang, loadingTopic, onNewTopic, onChec
                 'Tap the mic and start speaking. Take your time, beta.'
               )}
             </p>
-            {recording && hasLiveTranscription && <p className="live">{rec.liveText || <span className="muted">Listening…</span>}</p>}
+            {recording && (
+              <p className="live">
+                {hasLiveTranscription && rec.liveText ? (
+                  rec.liveText
+                ) : (
+                  <span className={`hearing${rec.level > 0.06 ? ' on' : ''}`}>{rec.level > 0.06 ? '👂 Granny can hear you…' : 'Listening… start speaking'}</span>
+                )}
+              </p>
+            )}
             {rec.error && <p className="error">{rec.error}</p>}
+            {err && !transcribing && rec.status !== 'stopped' && <p className="error">{err}</p>}
             {!recording && (
               <button className="btn link" onClick={() => setTyping(true)}>
                 No microphone? Type your answer instead
@@ -140,15 +163,11 @@ export default function Practice({ topic, lang, loadingTopic, onNewTopic, onChec
             </p>
             <textarea value={transcript} onChange={(e) => setTranscript(e.target.value)} rows={6} placeholder="Your words…" />
             {err && <p className="error">{err}</p>}
+            {err && detail && <p className="muted small">Details: {detail}</p>}
             <div className="actions">
               <button className="btn ghost" onClick={restart}>
                 Record again
               </button>
-              {audio && hasLiveTranscription && (
-                <button className="btn ghost" onClick={() => runPuterTranscription(audio)}>
-                  Listen again more carefully
-                </button>
-              )}
               <button className="btn primary" disabled={!hasAnswer} onClick={() => onCheck(transcript.trim())}>
                 Check my English ✎
               </button>

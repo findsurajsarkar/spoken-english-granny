@@ -6,7 +6,7 @@
  * limit) plus small "days", "stats", "badges", "settings" and "plus" entries.
  *
  * To move to Supabase later, re-implement pull/push here; the rest of the app doesn't change. */
-import { getUsername, isSignedIn, kv } from './puter';
+import { getAccount, isSignedIn, kv } from './puter';
 import {
   clearLocal,
   exportLocal,
@@ -14,6 +14,7 @@ import {
   HISTORY_DAYS,
   importLocal,
   localOwner,
+  localOwnerWasGuest,
   setLocalOwner,
   type Snapshot,
 } from './storage';
@@ -118,7 +119,7 @@ async function writeSummary(s: Snapshot) {
 /**
  * Called after sign-in and on app start. Merges this device with the account and saves the
  * result both ways. Progress made on this device before signing in is added to the account;
- * progress belonging to a different account is removed from this device first.
+ * progress belonging to a different (non-guest) account is removed from this device first.
  */
 export async function syncNow(): Promise<boolean> {
   if (!isSignedIn()) {
@@ -127,9 +128,11 @@ export async function syncNow(): Promise<boolean> {
   }
   set('syncing');
   try {
-    const username = await getUsername();
+    const { username, guest } = await getAccount();
     const owner = localOwner();
-    if (username && owner && owner !== username) clearLocal();
+    // Another person's progress on a shared device is removed first. A guest's progress is kept
+    // and merged, so "Save progress with Google" moves it into their real account.
+    if (username && owner && owner !== username && !localOwnerWasGuest()) clearLocal();
 
     const local = exportLocal();
     const cloud = await readCloud();
@@ -146,7 +149,7 @@ export async function syncNow(): Promise<boolean> {
     await writeSummary(merged);
 
     importLocal({ ...merged, history: merged.history.filter((a) => a.createdAt >= cutoff) });
-    if (username) setLocalOwner(username);
+    if (username) setLocalOwner(username, guest);
     set('saved');
     return true;
   } catch (e) {

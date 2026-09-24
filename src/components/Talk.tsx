@@ -171,16 +171,19 @@ function Chat({ scenario, settings, onExit, onFinish }: { scenario: Scenario; se
     }
   };
 
-  const onRecorded = async ({ audio, liveText }: Recording) => {
+  const onRecorded = async ({ audio, liveText, silent, seconds }: Recording) => {
     rec.reset();
-    if (liveText) return send(liveText);
-    if (!audio) return;
+    if (seconds < 1.2) return setError('That was very short. Tap the mic, say your answer, then tap again to send.');
+    if (!audio) return liveText ? send(liveText) : undefined;
     setHearing(true);
     try {
-      send(await transcribe(audio));
+      const text = (await transcribe(audio)) || liveText;
+      if (text) send(text);
+      else setError(silent ? "Granny couldn't hear any sound. Check the microphone isn't muted or blocked, and speak close to the phone." : "Granny couldn't make out any words. Please try again a little louder.");
     } catch (e) {
       console.error(e);
-      setError("Granny couldn't hear that clearly. Try again, or type your answer.");
+      if (liveText) send(liveText);
+      else setError(`Granny couldn't hear that clearly. Try again, or type your answer. (${e instanceof Error ? e.message : 'transcription failed'})`);
     } finally {
       setHearing(false);
     }
@@ -242,9 +245,11 @@ function Chat({ scenario, settings, onExit, onFinish }: { scenario: Scenario; se
             </p>
           </div>
         ))}
-        {recording && hasLiveTranscription && rec.liveText && (
+        {recording && (
           <div className="bubble-row me">
-            <p className="bubble me live-bubble">{rec.liveText}</p>
+            <p className="bubble me live-bubble">
+              {hasLiveTranscription && rec.liveText ? rec.liveText : rec.level > 0.06 ? '👂 Granny can hear you…' : 'Listening… start speaking'}
+            </p>
           </div>
         )}
         {busy && (
@@ -275,7 +280,7 @@ function Chat({ scenario, settings, onExit, onFinish }: { scenario: Scenario; se
         <div className="talk-controls card">
           <button
             className={`mic small-mic${recording ? ' on' : ''}`}
-            style={{ ['--p' as string]: Math.min(1, rec.elapsed / 60) }}
+            style={{ ['--p' as string]: Math.min(1, rec.elapsed / 60), ['--lvl' as string]: rec.level }}
             onClick={recording ? rec.stop : startRec}
             disabled={busy}
             aria-label={recording ? 'Stop and send' : 'Tap to speak'}

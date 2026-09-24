@@ -1,14 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
+import Account from './components/Account';
 import Badges from './components/Badges';
 import History from './components/History';
 import Landing from './components/Landing';
+import Legal from './components/Legal';
 import Plus from './components/Plus';
 import PracticeFlow from './components/PracticeFlow';
 import Talk from './components/Talk';
+import { pushSummary, syncNow } from './lib/cloud';
 import { isPlus } from './lib/plan';
-import { getUsername, isSignedIn, signIn } from './lib/puter';
-import { go, useRoute, type Route } from './lib/router';
-import { hasVisitedApp, loadDays, loadHistory, loadSettings, markVisitedApp, saveSettings } from './lib/storage';
+import { getUsername, isSignedIn, signIn, signOut } from './lib/puter';
+import { go, LEGAL_ROUTES, useRoute, type Route } from './lib/router';
+import { clearLocal, hasVisitedApp, loadDays, loadHistory, loadSettings, markVisitedApp, saveSettings } from './lib/storage';
 import type { Settings } from './lib/types';
 
 const TABS: Array<{ route: Route; label: string; icon: string }> = [
@@ -36,20 +39,52 @@ export default function App() {
     if (route !== '/') markVisitedApp();
   }, [route]);
 
-  useEffect(() => {
-    if (signedIn) getUsername().then(setUsername);
-  }, [signedIn]);
-
-  const updateSettings = (s: Settings) => {
-    setSettings(s);
-    saveSettings(s);
-  };
-
   const refresh = useCallback(() => {
     setDays(loadDays());
     setHistory(loadHistory());
     setPlus(isPlus());
+    setSettings(loadSettings());
   }, []);
+
+  // When signed in, merge this device with the learner's account (on start and when back online).
+  useEffect(() => {
+    if (!signedIn) {
+      setUsername(null);
+      return;
+    }
+    getUsername().then(setUsername);
+    const sync = () => syncNow().then((ok) => ok && refresh());
+    sync();
+    window.addEventListener('online', sync);
+    return () => window.removeEventListener('online', sync);
+  }, [signedIn, refresh]);
+
+  const updateSettings = (s: Settings) => {
+    setSettings(s);
+    saveSettings(s);
+    void pushSummary();
+  };
+
+  const handleSignIn = async () => {
+    try {
+      await signIn();
+    } catch {
+      return;
+    }
+    setSignedIn(isSignedIn());
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (e) {
+      console.error(e);
+    }
+    clearLocal(); // their progress is safe in their account; don't leave it on a shared phone
+    setSignedIn(false);
+    refresh();
+    go('/practice');
+  };
 
   /** Must run from a click so the Puter sign-in popup isn't blocked. */
   const ensureSignedIn = useCallback(async () => {
@@ -65,6 +100,7 @@ export default function App() {
   }, []);
 
   if (route === '/') return <Landing />;
+  if (LEGAL_ROUTES.includes(route)) return <Legal route={route} />;
 
   return (
     <div className="app">
@@ -83,6 +119,7 @@ export default function App() {
         <button className={`plus-btn${plus ? ' member' : ''}${route === '/plus' ? ' on' : ''}`} onClick={() => go('/plus')} title={username ? `Signed in as ${username}` : undefined}>
           {plus ? '✨ Plus' : 'Get Plus'}
         </button>
+        <Account signedIn={signedIn} username={username} onSignIn={handleSignIn} onSignOut={handleSignOut} />
       </header>
 
       <main>
@@ -92,11 +129,20 @@ export default function App() {
         {route === '/talk' && <Talk settings={settings} ensureSignedIn={ensureSignedIn} onSaved={refresh} />}
         {route === '/badges' && <Badges days={days} />}
         {route === '/history' && <History items={history} />}
-        {route === '/plus' && <Plus username={username} onChange={refresh} />}
+        {route === '/plus' && (
+          <Plus
+            username={username}
+            onChange={() => {
+              refresh();
+              void pushSummary();
+            }}
+          />
+        )}
       </main>
 
       <footer className="foot">
-        <a href="#/">About Granny</a> · Made with love · Granny never laughs at mistakes
+        <a href="#/">About</a> · <a href="#/privacy">Privacy</a> · <a href="#/terms">Terms</a> · <a href="#/refund">Refunds</a> ·{' '}
+        <a href="#/contact">Contact</a>
       </footer>
 
       <nav className="bottom-tabs" aria-label="Main">

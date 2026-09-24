@@ -1,4 +1,4 @@
-import { read, sessionsToday, write } from './storage';
+import { PLUS_KEY, read, sessionsToday, write } from './storage';
 
 export const FREE_DAILY_SESSIONS = 3;
 
@@ -19,7 +19,7 @@ interface PlusState {
   test?: boolean;
 }
 
-const KEY = 'granny.plus.v1';
+const KEY = PLUS_KEY;
 
 export function plusState(): PlusState | null {
   const s = read<PlusState | null>(KEY, null);

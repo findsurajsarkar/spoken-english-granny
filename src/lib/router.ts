@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
-export type Route = '/' | '/practice' | '/talk' | '/badges' | '/history' | '/plus';
-const ROUTES: Route[] = ['/', '/practice', '/talk', '/badges', '/history', '/plus'];
+export type Route = '/' | '/practice' | '/talk' | '/badges' | '/history' | '/plus' | '/privacy' | '/terms' | '/refund' | '/contact';
+const ROUTES: Route[] = ['/', '/practice', '/talk', '/badges', '/history', '/plus', '/privacy', '/terms', '/refund', '/contact'];
+export const LEGAL_ROUTES: Route[] = ['/privacy', '/terms', '/refund', '/contact'];
 
 function current(): Route {
   const r = window.location.hash.replace(/^#/, '') || '/';

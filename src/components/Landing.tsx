@@ -27,11 +27,11 @@ const FAQ = [
   },
   {
     q: 'Do I need an account?',
-    a: "Granny's AI runs on Puter. You sign in once with a free Puter account, and there are no API keys or settings to worry about.",
+    a: 'Yes, a free one. Sign in once with Google (through Puter, which runs Granny\'s AI) and your progress is saved to your account.',
   },
   {
     q: 'Are my recordings saved?',
-    a: 'Granny does not keep your recordings. Your voice is only sent to a speech service to turn it into text, and your practice history stays on your own device.',
+    a: 'Granny does not keep your recordings. Your voice is only sent to a speech service to turn it into text. Your practice history is saved to your own account, so it follows you to any device where you sign in.',
   },
   {
     q: 'My English is very weak. Can I still use it?',
@@ -189,7 +189,10 @@ export default function Landing() {
         </button>
       </section>
 
-      <footer className="foot">© {new Date().getFullYear()} Spoken English Granny · Made with love · Granny never laughs at mistakes</footer>
+      <footer className="foot">
+        © {new Date().getFullYear()} Spoken English Granny · <a href="#/privacy">Privacy</a> · <a href="#/terms">Terms</a> · <a href="#/refund">Refunds</a> ·{' '}
+        <a href="#/contact">Contact</a>
+      </footer>
     </div>
   );
 }

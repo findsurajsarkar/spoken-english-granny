@@ -1,4 +1,5 @@
 import type { Badge } from './badges';
+import { pushAttempt } from './cloud';
 import { checkEnglish } from './granny';
 import { saveAttempt } from './storage';
 import type { Attempt, ExplainLang, Topic, Turn } from './types';
@@ -27,5 +28,6 @@ export async function checkAndSave(input: CheckInput): Promise<{ attempt: Attemp
     conversation: input.conversation,
   };
   const badges = saveAttempt(attempt);
+  void pushAttempt(attempt);
   return { attempt, badges };
 }

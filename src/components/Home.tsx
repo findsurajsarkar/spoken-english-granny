@@ -1,4 +1,5 @@
 import type { ExplainLang, Level, Settings } from '../lib/types';
+import InstallCard from './InstallCard';
 import StreakGrid from './StreakGrid';
 
 const LEVELS: Array<{ id: Level; label: string; hint: string }> = [
@@ -75,6 +76,7 @@ export default function Home({ settings, onSettings, days, signedIn, loading, er
       </section>
 
       <StreakGrid days={days} />
+      <InstallCard />
     </div>
   );
 }

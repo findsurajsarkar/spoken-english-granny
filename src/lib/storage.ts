@@ -63,7 +63,7 @@ export function sessionsToday(): number {
   return loadDays()[dayKey()] ?? 0;
 }
 
-const EMPTY_STATS: Stats = { sessions: 0, talks: 0, words: 0, best: 0, mostWords: 0, levels: [], interviewBest: 0, earlyBird: false, nightOwl: false };
+export const EMPTY_STATS: Stats = { sessions: 0, talks: 0, words: 0, best: 0, mostWords: 0, levels: [], interviewBest: 0, earlyBird: false, nightOwl: false };
 
 export function loadStats(): Stats {
   return { ...EMPTY_STATS, ...read<Partial<Stats>>(KEYS.stats, {}) };
@@ -119,4 +119,58 @@ export function recentTopicTitles(n = 15): string[] {
     .filter((a) => a.mode !== 'talk')
     .slice(0, n)
     .map((a) => a.topic.title);
+}
+
+/* ---------- whole-device snapshot, used by cloud sync ---------- */
+
+export const PLUS_KEY = 'granny.plus.v1';
+const OWNER_KEY = 'granny.owner.v1';
+
+export interface Snapshot {
+  history: Attempt[];
+  days: Record<string, number>;
+  stats: Stats;
+  badges: Record<string, string>;
+  settings: Settings | null;
+  plus: unknown;
+}
+
+export function exportLocal(): Snapshot {
+  return {
+    history: loadHistory(),
+    days: loadDays(),
+    stats: loadStats(),
+    badges: loadEarned(),
+    settings: read<Settings | null>(KEYS.settings, null),
+    plus: read<unknown>(PLUS_KEY, null),
+  };
+}
+
+export function importLocal(s: Snapshot) {
+  write(KEYS.history, s.history.slice(0, MAX_ATTEMPTS));
+  write(KEYS.days, s.days);
+  write(KEYS.stats, s.stats);
+  write(KEYS.badges, s.badges);
+  if (s.settings) write(KEYS.settings, s.settings);
+  write(PLUS_KEY, s.plus ?? null);
+}
+
+/** Removes the learner's progress from this device (it stays safe in their account). */
+export function clearLocal() {
+  [KEYS.history, KEYS.days, KEYS.stats, KEYS.badges, PLUS_KEY, OWNER_KEY].forEach((k) => {
+    try {
+      localStorage.removeItem(k);
+    } catch {
+      /* ignore */
+    }
+  });
+}
+
+/** Which account the progress on this device belongs to (null = made before signing in). */
+export function localOwner(): string | null {
+  return read<string | null>(OWNER_KEY, null);
+}
+
+export function setLocalOwner(username: string) {
+  write(OWNER_KEY, username);
 }

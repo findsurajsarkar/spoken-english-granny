@@ -31,6 +31,20 @@ export async function signIn(): Promise<void> {
   await puter().auth.signIn();
 }
 
+export async function signOut(): Promise<void> {
+  await puter().auth.signOut();
+}
+
+/** Puter's per-user, per-app key-value store (values up to 400 KB each). */
+export function kv() {
+  return puter().kv as {
+    get: (key: string) => Promise<any>;
+    set: (key: string, value: unknown) => Promise<boolean>;
+    del: (key: string) => Promise<boolean>;
+    list: (pattern: string, returnValues: true) => Promise<Array<{ key: string; value: any }>>;
+  };
+}
+
 export async function getUsername(): Promise<string | null> {
   try {
     const user = await puter().auth.getUser();

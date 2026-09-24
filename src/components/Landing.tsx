@@ -1,88 +1,88 @@
-import { useState } from 'react';
 import { APK_URL, BUSINESS } from '../config';
 import { track } from '../lib/analytics';
 import { useInstall } from '../lib/install';
-import { FREE_DAILY_SESSIONS, PLANS, PLUS_DAILY_SESSIONS } from '../lib/plan';
-import { canSellHere } from '../lib/platform';
 import { go } from '../lib/router';
-import { shareText } from '../lib/share';
 import Testimonials from './Testimonials';
 import './landing.css';
 
-const VIDEOS = [
-  {
-    id: 'correct',
-    src: 'videos/granny-speak-and-correct.mp4',
-    poster: 'videos/granny-speak-and-correct.jpg',
-    title: 'Speak, and see every mistake corrected',
-    text: 'Pick a level, get a fresh topic and talk. Granny checks your answer like a teacher with a red pen, and explains each mistake in simple words.',
-    points: ['New topic every time', 'Corrections written above your words', 'Marks out of 10 with a kind remark'],
-  },
-  {
-    id: 'talk',
-    src: 'videos/granny-real-conversations.mp4',
-    poster: 'videos/granny-real-conversations.jpg',
-    title: 'Practise real conversations',
-    text: 'Job interview, office small talk, ordering food, the doctor, the airport. Granny plays the other person and never stops you mid-sentence.',
-    points: ['8 everyday situations', 'Replies read aloud', 'Full feedback when you finish'],
-  },
-  {
-    id: 'progress',
-    src: 'videos/granny-track-progress.mp4',
-    poster: 'videos/granny-track-progress.jpg',
-    title: 'Build a daily habit',
-    text: 'An attendance calendar, streaks and badges keep you coming back. Every notebook page is saved, so you can see how far you have come.',
-    points: ['Streak calendar', '17 badges to earn', 'History on every device'],
-  },
-];
-
-const FEATURES = [
-  { icon: '✎', title: 'Red-pen corrections', text: 'Mistakes are circled and corrected right on your words, just like a teacher checking your copy.' },
-  { icon: 'अ', title: 'Hindi & Hinglish explanations', text: 'Every correction explained in simple English, Hinglish or Hindi. No grammar jargon, ever.' },
-  { icon: '◎', title: 'Topics for your level', text: 'Beginner, intermediate or advanced. A new topic every time, with a timer that fits it.' },
-  { icon: '💬', title: 'Real-life conversations', text: 'Rehearse the job interview, the office chat or the doctor visit before it happens.' },
-  { icon: '10', title: 'Fair marks', text: 'Marks out of 10 that reward harder sentences, not just fewer mistakes.' },
-  { icon: '↻', title: 'Streaks & history', text: 'Your progress is saved to your account and follows you to every device.' },
-];
-
-const FAQ = [
-  {
-    q: 'Is it really free?',
-    a: `Yes. The free plan gives you ${FREE_DAILY_SESSIONS} practices every day, forever, with no card needed. Granny Plus gives you ${PLUS_DAILY_SESSIONS} practices a day and every conversation.`,
-  },
-  { q: 'Do I need an account?', a: "Yes, a free one. Sign in once with Google (through Puter, which runs Granny's AI). Your progress is saved to your account." },
-  { q: 'My English is very weak. Can I still use it?', a: 'Yes. Granny is made for exactly that. Choose Beginner, speak a few simple sentences, and read the explanations in Hindi or Hinglish.' },
-  { q: 'Is anyone listening to me?', a: 'No. There is no audience and no human judging you. Granny does not keep your recordings; your voice is only turned into text so she can check it.' },
-  { q: 'Which devices does it work on?', a: 'Android phones (download the app below or use Chrome), Windows and Mac computers (Chrome or Edge), and iPhone through Safari.' },
-  { q: 'How do I pay for Plus? Can I get a refund?', a: `Pay by UPI through WhatsApp and get an activation code, usually within a few hours. Not happy? Full refund within 3 days: WhatsApp ${BUSINESS.phoneDisplay}.` },
-];
-
+/** The same red Granny logo as the app, so the website and the app are clearly one product. */
 function Logo() {
   return (
     <span className="lp-logo">
-      <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden>
-        <rect width="32" height="32" rx="8" fill="currentColor" />
-        <circle cx="16" cy="15" r="8" fill="#fff" />
-        <circle cx="13" cy="14.5" r="2.1" fill="none" stroke="currentColor" strokeWidth="1.2" />
-        <circle cx="19" cy="14.5" r="2.1" fill="none" stroke="currentColor" strokeWidth="1.2" />
-        <path d="M13.5 18.3q2.5 1.8 5 0" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        <path d="M8 26h16" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" />
-      </svg>
+      <img src="icon.svg" width={32} height={32} alt="" />
       Spoken English Granny
     </span>
   );
 }
 
-export default function Landing() {
-  const [faq, setFaq] = useState<number | null>(0);
-  const [video, setVideo] = useState(0);
+const WHY = [
+  { icon: '🙂', title: 'No fear, no judging', text: 'Nobody is watching. Granny never laughs, so you can speak freely and make mistakes.' },
+  { icon: '✍️', title: 'Red-pen corrections', text: 'Every mistake circled and corrected, like a teacher checking your notebook.' },
+  { icon: 'अ', title: 'Explained in your language', text: 'Simple explanations in English, Hinglish or Hindi. No grammar jargon.' },
+  { icon: '💯', title: 'Marks out of 10', text: 'See how you did and watch yourself improve, day after day.' },
+];
+
+const FLOW = [
+  { img: 'images/app-home.jpg', title: 'Choose your level', text: 'Beginner, intermediate or advanced, and the language for explanations.' },
+  { img: 'images/app-topic.jpg', title: 'Speak on a topic', text: 'Get a fresh topic with hints. Tap the mic and speak, or type.' },
+  { img: 'images/app-result.jpg', title: 'Get your marks', text: 'Granny checks your English and gives marks out of 10 with a kind remark.' },
+  { img: 'images/app-notebook.jpg', title: 'Learn from the red pen', text: 'Mistakes circled, the right words written above, and why, in simple words.' },
+];
+
+const ANDROID_ICON =
+  'M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.87 3.23a11.4 11.4 0 0 0-9.82 0L5.22 5.92a.38.38 0 0 0-.66.38l1.84 3.18A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52ZM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Z';
+const WINDOWS_ICON = 'M2 4.6 10 3.5v7.7H2V4.6Zm9-1.2L22 2v9.2H11V3.4ZM2 12.2h8v7.7l-8-1.1v-6.6Zm9 0h11V22l-11-1.5v-8.3Z';
+
+function DownloadButtons({ where }: { where: string }) {
   const { canPrompt, install } = useInstall();
+  return (
+    <div className="lp-dl-buttons">
+      <a className="lp-store" href={APK_URL} download="spoken-english-granny.apk" onClick={() => track('download_apk', { where })}>
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden>
+          <path fill="currentColor" d={ANDROID_ICON} />
+        </svg>
+        <span>
+          <small>Download for</small>Android
+        </span>
+      </a>
+      <a
+        className="lp-store"
+        href="#download"
+        onClick={(e) => {
+          e.preventDefault();
+          track('download_windows', { where });
+          if (canPrompt) install();
+          else document.getElementById('download')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden>
+          <path fill="currentColor" d={WINDOWS_ICON} />
+        </svg>
+        <span>
+          <small>Install for</small>Windows
+        </span>
+      </a>
+    </div>
+  );
+}
+
+function WindowsInstall() {
+  const { canPrompt, install } = useInstall();
+  return canPrompt ? (
+    <button className="lp-btn lp-btn-primary" onClick={() => (track('download_windows', { where: 'download' }), install())}>
+      ⬇ Install for Windows
+    </button>
+  ) : (
+    <p className="lp-note">The install button appears here when you open this page in Chrome or Edge on Windows.</p>
+  );
+}
+
+export default function Landing() {
   const start = (where: string) => {
     track('cta_start', { where });
     go('/practice');
   };
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  const v = VIDEOS[video];
 
   return (
     <div className="lp">
@@ -92,341 +92,167 @@ export default function Landing() {
             <Logo />
           </a>
           <nav>
-            {[
-              ['demo', 'Demo'],
-              ['features', 'Features'],
-              ['pricing', 'Pricing'],
-              ['download', 'Download'],
-              ['faq', 'FAQ'],
-            ].map(([id, label]) => (
-              <a key={id} href={`#${id}`} onClick={(e) => (e.preventDefault(), scrollTo(id))}>
-                {label}
-              </a>
-            ))}
+            <a href="#why" onClick={(e) => (e.preventDefault(), scrollTo('why'))}>
+              Why Granny
+            </a>
+            <a href="#how" onClick={(e) => (e.preventDefault(), scrollTo('how'))}>
+              How it works
+            </a>
+            <a href="#download" onClick={(e) => (e.preventDefault(), scrollTo('download'))}>
+              Download
+            </a>
           </nav>
           <button className="lp-btn lp-btn-primary lp-btn-sm" onClick={() => start('nav')}>
-            Start free
+            Test your English
           </button>
         </div>
       </header>
 
-      {/* 1. Hero: promise + primary action */}
+      {/* 1. The product, 2. the free offer, 3. downloads: all visible straight away */}
       <section className="lp-hero">
         <div className="lp-wrap lp-hero-in">
           <div className="lp-hero-copy">
-            <p className="lp-eyebrow">AI spoken-English coach for Hindi speakers</p>
+            <p className="lp-eyebrow">Spoken English practice for Hindi speakers</p>
             <h1>
-              Speak English with confidence, <em>without the fear of mistakes.</em>
+              Speak English with confidence. <em>Granny never laughs at mistakes.</em>
             </h1>
             <p className="lp-lead">
-              Talk about anything. Granny listens, never laughs, and corrects you like a patient teacher: every mistake circled, fixed and explained in simple
-              English, Hinglish or Hindi.
+              Talk about anything and get your English checked instantly: every mistake circled in red, corrected, and explained simply in English, Hinglish or
+              Hindi.
             </p>
-            <div className="lp-ctas">
-              <button className="lp-btn lp-btn-primary" onClick={() => start('hero')}>
-                Start practising free
+            <div className="lp-offer">
+              <button className="lp-btn lp-btn-primary lp-btn-lg" onClick={() => start('hero')}>
+                Test your English free →
               </button>
-              <a className="lp-btn lp-btn-ghost" href={APK_URL} download="spoken-english-granny.apk" onClick={() => track('download_apk', { where: 'hero' })}>
-                ⬇ Download Android app
-              </a>
+              <p>Takes 2 minutes · No payment · Start speaking with Granny right away</p>
             </div>
-            <button className="lp-link" onClick={() => scrollTo('demo')}>
-              ▶ Watch the 1-minute demo
-            </button>
-            <ul className="lp-trust">
-              <li>Free plan forever</li>
-              <li>No credit card</li>
-              <li>Android app & Windows</li>
-            </ul>
+            <DownloadButtons where="hero" />
           </div>
-          <div className="lp-hero-media">
-            <div className="lp-device">
-              <video src={VIDEOS[0].src} poster={VIDEOS[0].poster} autoPlay muted loop playsInline aria-label="Short demo of Granny correcting spoken English" />
+
+          <div className="lp-hero-art" aria-hidden>
+            <div className="lp-phone lp-phone-back">
+              <img src="images/app-topic.jpg" alt="" />
             </div>
+            <div className="lp-phone lp-phone-front">
+              <img src="images/app-notebook.jpg" alt="" />
+            </div>
+            <div className="lp-chip lp-chip-1">✍️ Mistakes circled</div>
+            <div className="lp-chip lp-chip-2">💯 Marks out of 10</div>
+            <div className="lp-chip lp-chip-3">अ Hindi & Hinglish help</div>
           </div>
         </div>
       </section>
 
-      {/* 2. Problem */}
-      <section className="lp-section">
+      <section id="why" className="lp-section">
         <div className="lp-wrap">
-          <p className="lp-kicker">The real problem</p>
-          <h2 className="lp-h2">Knowing English isn't the hard part. Speaking it is.</h2>
-          <div className="lp-grid3">
-            <div className="lp-card">
-              <strong>Fear of being laughed at</strong>
-              <p>So you stay quiet in class, in meetings and in interviews, even when you know the answer.</p>
-            </div>
-            <div className="lp-card">
-              <strong>No one to practise with</strong>
-              <p>Speaking needs practice, but friends and family can't correct you every day.</p>
-            </div>
-            <div className="lp-card">
-              <strong>Explanations you can't follow</strong>
-              <p>Grammar books talk about "participles" and "clauses". You just want to know what to say.</p>
-            </div>
-          </div>
-          <p className="lp-bridge">
-            Remember how our grandparents never made fun of our mistakes? <strong>Granny is that safe place</strong>: no audience, no judging, just practice.
-          </p>
-        </div>
-      </section>
-
-      {/* 3. Demo videos */}
-      <section id="demo" className="lp-section lp-tint">
-        <div className="lp-wrap">
-          <p className="lp-kicker">See it in action</p>
-          <h2 className="lp-h2">Three minutes a day. Real progress.</h2>
-          <div className="lp-tabs" role="tablist">
-            {VIDEOS.map((x, i) => (
-              <button
-                key={x.id}
-                role="tab"
-                aria-selected={video === i}
-                className={video === i ? 'on' : ''}
-                onClick={() => {
-                  setVideo(i);
-                  track('demo_video', { video: x.id });
-                }}
-              >
-                <span>{i + 1}</span> {x.title}
-              </button>
-            ))}
-          </div>
-          <div className="lp-demo">
-            <div className="lp-device lp-device-lg">
-              <video key={v.src} src={v.src} poster={v.poster} controls playsInline preload="metadata" aria-label={v.title} />
-            </div>
-            <div className="lp-demo-copy">
-              <h3>{v.title}</h3>
-              <p>{v.text}</p>
-              <ul className="lp-checks">
-                {v.points.map((p) => (
-                  <li key={p}>{p}</li>
-                ))}
-              </ul>
-              <p className="lp-note">Tap play and turn the sound on for the voiceover.</p>
-              <button className="lp-btn lp-btn-primary" onClick={() => start('demo')}>
-                Try it yourself, free
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. How it works */}
-      <section className="lp-section">
-        <div className="lp-wrap">
-          <p className="lp-kicker">How it works</p>
-          <h2 className="lp-h2">Get a topic. Speak. See the red pen.</h2>
-          <ol className="lp-steps">
-            <li>
-              <span>1</span>
-              <strong>Get a topic</strong>
-              <p>Choose Beginner, Intermediate or Advanced. Granny gives you something easy and fun to talk about.</p>
-            </li>
-            <li>
-              <span>2</span>
-              <strong>Speak freely</strong>
-              <p>Tap the mic and talk at your own pace, or type if you prefer. Nobody else is listening.</p>
-            </li>
-            <li>
-              <span>3</span>
-              <strong>Learn from the corrections</strong>
-              <p>See your mistakes circled and fixed, read why in simple words, and hear the right way to say it.</p>
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      {/* 5. Features */}
-      <section id="features" className="lp-section lp-tint">
-        <div className="lp-wrap">
-          <p className="lp-kicker">Features</p>
-          <h2 className="lp-h2">Everything you need to speak with confidence</h2>
-          <div className="lp-grid3">
-            {FEATURES.map((f) => (
-              <div key={f.title} className="lp-card lp-feature">
-                <span className="lp-ficon" aria-hidden>
-                  {f.icon}
+          <p className="lp-kicker lp-c">Why Granny</p>
+          <h2 className="lp-h2 lp-c">The safe way to practise speaking English</h2>
+          <div className="lp-why">
+            {WHY.map((w) => (
+              <div key={w.title} className="lp-why-card">
+                <span className="lp-why-icon" aria-hidden>
+                  {w.icon}
                 </span>
-                <strong>{f.title}</strong>
-                <p>{f.text}</p>
+                <strong>{w.title}</strong>
+                <p>{w.text}</p>
               </div>
             ))}
           </div>
-          <div className="lp-uses">
-            {['Job interviews', 'College & viva', 'Office meetings', 'Customer calls', 'Travel', 'Everyday confidence'].map((u) => (
-              <span key={u}>{u}</span>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* 6. Social proof (real testimonials only) */}
-      <Testimonials />
-      <section className="lp-section lp-early">
-        <div className="lp-wrap lp-early-in">
-          <div>
-            <h2 className="lp-h2 lp-left">Be one of our first learners</h2>
-            <p>
-              Granny is new. Try her free for a week and tell us honestly how it went. The best stories (with your permission) will appear right here.
-            </p>
-          </div>
-          <div className="lp-ctas">
-            <button className="lp-btn lp-btn-primary" onClick={() => start('early')}>
-              Start free
-            </button>
-            <a className="lp-btn lp-btn-ghost" href="#/feedback">
-              Share feedback
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Pricing */}
-      <section id="pricing" className="lp-section lp-tint">
+      <section id="how" className="lp-section lp-tint">
         <div className="lp-wrap">
-          <p className="lp-kicker">Pricing</p>
-          <h2 className="lp-h2">Start free. Upgrade only if you love it.</h2>
-          <div className="lp-prices">
-            <div className="lp-price">
-              <h3>Free</h3>
-              <p className="lp-amount">
-                ₹0 <span>forever</span>
-              </p>
-              <ul className="lp-checks">
-                <li>{FREE_DAILY_SESSIONS} practices a day</li>
-                <li>All levels & red-pen corrections</li>
-                <li>English, Hinglish & Hindi explanations</li>
-                <li>3 everyday conversations</li>
-                <li>Streaks, badges & history</li>
-              </ul>
-              <button className="lp-btn lp-btn-ghost" onClick={() => start('pricing_free')}>
-                Start free
+          <p className="lp-kicker lp-c">How it works</p>
+          <h2 className="lp-h2 lp-c">From your first word to better English in 4 steps</h2>
+          <ol className="lp-flow">
+            {FLOW.map((f, i) => (
+              <li key={f.title}>
+                <div className="lp-flow-shot">
+                  <img src={f.img} alt={`${f.title}: app screen`}/>
+                </div>
+                <div className="lp-flow-text">
+                  <span className="lp-flow-n">{i + 1}</span>
+                  <strong>{f.title}</strong>
+                  <p>{f.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <div className="lp-video">
+            <div className="lp-video-frame">
+              <video src="videos/granny-walkthrough.mp4" poster="videos/granny-walkthrough.jpg" autoPlay muted loop playsInline controls aria-label="30-second walkthrough of the app" />
+            </div>
+            <div>
+              <h3>See it in 30 seconds</h3>
+              <p>Choose a level, get a topic, speak, and watch Granny's red pen check your English.</p>
+              <button className="lp-btn lp-btn-primary lp-btn-lg" onClick={() => start('how')}>
+                Try it now, free →
               </button>
             </div>
-            <div className="lp-price">
-              <h3>Plus Monthly</h3>
-              <p className="lp-amount">
-                ₹{PLANS.monthly.price} <span>/ month</span>
-              </p>
-              <ul className="lp-checks">
-                <li>{PLUS_DAILY_SESSIONS} practices a day</li>
-                <li>All 8 conversations incl. job interview</li>
-                <li>Everything in Free</li>
-                <li>No auto-renewal</li>
-              </ul>
-              {canSellHere && (
-                <button className="lp-btn lp-btn-primary" onClick={() => (track('pricing_plus', { plan: 'monthly' }), go('/plus'))}>
-                  Get Plus Monthly
-                </button>
-              )}
-            </div>
-            <div className="lp-price lp-price-best">
-              <span className="lp-badge">Best value</span>
-              <h3>Plus Lifetime</h3>
-              <p className="lp-amount">
-                ₹{PLANS.lifetime.price.toLocaleString('en-IN')} <span>one time</span>
-              </p>
-              <ul className="lp-checks">
-                <li>{PLUS_DAILY_SESSIONS} practices a day, for life</li>
-                <li>All 8 conversations incl. job interview</li>
-                <li>Everything in Free</li>
-                <li>Pay once, no renewals</li>
-              </ul>
-              {canSellHere && (
-                <button className="lp-btn lp-btn-primary" onClick={() => (track('pricing_plus', { plan: 'lifetime' }), go('/plus'))}>
-                  Get Plus Lifetime
-                </button>
-              )}
-            </div>
           </div>
-          <p className="lp-fine">Pay by UPI · Full refund within 3 days · Questions: WhatsApp {BUSINESS.phoneDisplay}</p>
         </div>
       </section>
 
-      {/* 8. Download (free options only) */}
+      <Testimonials />
+
       <section id="download" className="lp-section">
         <div className="lp-wrap">
-          <p className="lp-kicker">Download</p>
-          <h2 className="lp-h2">Get Granny on your phone or computer</h2>
+          <p className="lp-kicker lp-c">Download</p>
+          <h2 className="lp-h2 lp-c">Get Granny on your phone or computer</h2>
           <div className="lp-downloads">
-            <div className="lp-card lp-dl">
-              <span className="lp-dl-icon" aria-hidden>
-                <svg viewBox="0 0 24 24" width="30" height="30">
-                  <path
-                    fill="currentColor"
-                    d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.87 3.23a11.4 11.4 0 0 0-9.82 0L5.22 5.92a.38.38 0 0 0-.66.38l1.84 3.18A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52ZM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Z"
-                  />
-                </svg>
-              </span>
-              <strong>Android</strong>
-              <p>Free app, 1.1 MB. Download it, open the file and allow your browser to install apps when asked. Needs Google Chrome on the phone.</p>
-              {APK_URL ? (
-                <a className="lp-btn lp-btn-primary" href={APK_URL} download="spoken-english-granny.apk" onClick={() => track('download_apk')}>
-                  ⬇ Download for Android (.apk)
-                </a>
-              ) : (
-                <p className="lp-note">APK coming very soon. Meanwhile, open this page in Chrome and tap “Install app”.</p>
-              )}
-            </div>
-            <div className="lp-card lp-dl">
-              <span className="lp-dl-icon" aria-hidden>
-                <svg viewBox="0 0 24 24" width="28" height="28">
-                  <path fill="currentColor" d="M2 4.6 10 3.5v7.7H2V4.6Zm9-1.2L22 2v9.2H11V3.4ZM2 12.2h8v7.7l-8-1.1v-6.6Zm9 0h11V22l-11-1.5v-8.3Z" />
-                </svg>
-              </span>
-              <strong>Windows</strong>
-              <p>Install from Chrome or Edge: it opens in its own window with a Start-menu icon. Free, no store needed.</p>
-              {canPrompt ? (
-                <button className="lp-btn lp-btn-primary" onClick={install}>
-                  Install on this computer
-                </button>
-              ) : (
-                <p className="lp-note">Open this page in Chrome or Edge on Windows, then click the install icon (⊕) at the right of the address bar.</p>
-              )}
-            </div>
-          </div>
-          <p className="lp-fine">Using an iPhone or Mac? Just open Granny in your browser: it works there too.</p>
-        </div>
-      </section>
-
-      {/* 9. FAQ / objections */}
-      <section id="faq" className="lp-section lp-tint">
-        <div className="lp-wrap lp-narrow">
-          <p className="lp-kicker">FAQ</p>
-          <h2 className="lp-h2">Questions, answered</h2>
-          <div className="lp-faq">
-            {FAQ.map((f, i) => (
-              <div key={f.q} className={`lp-faq-item${faq === i ? ' open' : ''}`}>
-                <button onClick={() => setFaq(faq === i ? null : i)} aria-expanded={faq === i}>
-                  {f.q}
-                  <span aria-hidden>{faq === i ? '−' : '+'}</span>
-                </button>
-                {faq === i && <p>{f.a}</p>}
+            <div className="lp-dl-card">
+              <div className="lp-dl-head">
+                <span className="lp-dl-icon" aria-hidden>
+                  <svg viewBox="0 0 24 24" width="30" height="30">
+                    <path fill="currentColor" d={ANDROID_ICON} />
+                  </svg>
+                </span>
+                <div>
+                  <strong>Android app</strong>
+                  <span>Free · 1.1 MB</span>
+                </div>
               </div>
-            ))}
+              <ol>
+                <li>Tap the button below to download the app.</li>
+                <li>Open the downloaded file and tap Install. Allow installs from your browser if asked.</li>
+                <li>Open Granny and start speaking.</li>
+              </ol>
+              <a className="lp-btn lp-btn-primary" href={APK_URL} download="spoken-english-granny.apk" onClick={() => track('download_apk', { where: 'download' })}>
+                ⬇ Download for Android
+              </a>
+            </div>
+            <div className="lp-dl-card">
+              <div className="lp-dl-head">
+                <span className="lp-dl-icon" aria-hidden>
+                  <svg viewBox="0 0 24 24" width="28" height="28">
+                    <path fill="currentColor" d={WINDOWS_ICON} />
+                  </svg>
+                </span>
+                <div>
+                  <strong>Windows app</strong>
+                  <span>Free · installs from Chrome or Edge</span>
+                </div>
+              </div>
+              <ol>
+                <li>Open this page in Chrome or Edge on your computer.</li>
+                <li>Click the button below, or the install icon (⊕) in the address bar.</li>
+                <li>Granny opens in its own window, with a Start-menu icon.</li>
+              </ol>
+              <WindowsInstall />
+            </div>
           </div>
+          <p className="lp-fine">iPhone or Mac? Just open Granny in your browser: it works there too.</p>
         </div>
       </section>
 
-      {/* 10. Final call to action */}
       <section className="lp-final">
         <div className="lp-wrap">
-          <h2>Your first practice takes two minutes.</h2>
-          <p>Free forever plan. No credit card. Nobody watching.</p>
-          <div className="lp-ctas lp-center">
-            <button className="lp-btn lp-btn-white" onClick={() => start('final')}>
-              Start practising free
-            </button>
-            <button
-              className="lp-btn lp-btn-outline-white"
-              onClick={() => shareText('Practise spoken English with a kind AI granny who never laughs at your mistakes. Free to try:')}
-            >
-              Share with a friend
-            </button>
-          </div>
+          <h2>How good is your spoken English?</h2>
+          <p>Find out in 2 minutes. Granny is waiting, beta.</p>
+          <button className="lp-btn lp-btn-white lp-btn-lg" onClick={() => start('final')}>
+            Test your English free →
+          </button>
         </div>
       </section>
 
@@ -451,7 +277,7 @@ export default function Landing() {
 
       <div className="lp-sticky">
         <button className="lp-btn lp-btn-primary" onClick={() => start('sticky')}>
-          Start practising free
+          Test your English free
         </button>
       </div>
     </div>

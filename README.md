@@ -115,14 +115,14 @@ git commit -am "Plus code" && git push                    # live in ~1 minute
 
 The script prints the code and a ready-to-send WhatsApp message. The customer enters it on the Plus page.
 
-## Product videos
+## Walkthrough video
 
-The three landing-page videos in `public/videos/` are recorded from the real app (demo mode, scripted
-AI answers) with a macOS voiceover. To re-record after changing the UI or the wording:
+The silent 30-second walkthrough on the landing page (`public/videos/granny-walkthrough.mp4`) is recorded
+from the real app in demo mode (scripted AI answers). To re-record after changing the app:
 
 ```bash
 npm run dev -- --port 5188      # in one terminal
-npm run videos                  # in another (needs Google Chrome, ffmpeg, macOS `say`)
+npm run walkthrough             # in another (needs Google Chrome and ffmpeg)
 ```
 
 ## Settings to fill in

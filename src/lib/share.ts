@@ -1,7 +1,9 @@
 import { APP_URL } from '../config';
+import { track } from './analytics';
 
 /** Uses the phone's share sheet when available, otherwise opens WhatsApp. */
 export async function shareText(text: string) {
+  track('share');
   const full = `${text} ${APP_URL}`;
   if (navigator.share) {
     try {

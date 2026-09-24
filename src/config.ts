@@ -2,7 +2,10 @@
 export const BUSINESS = {
   name: 'Spoken English Granny',
   /** Support email shown to customers (required by Razorpay and app stores). */
-  email: '',
+  email: 'dawaipanikesanghomestay@gmail.com',
+  /** WhatsApp / phone for support, purchases and refunds (digits only, with country code). */
+  whatsapp: '918868969214',
+  phoneDisplay: '+91 88689 69214',
   /** City/state for the governing-law clause. */
   location: 'India',
   lastUpdated: '24 September 2026',
@@ -11,12 +14,14 @@ export const BUSINESS = {
 /** Public web address of the app (used in share messages). */
 export const APP_URL = 'https://findsurajsarkar.github.io/spoken-english-granny/';
 
-/** Play Store / App Store links: fill in once the apps are published (empty = "coming soon"). */
-export const STORE_LINKS = {
-  playStore: '',
-  appStore: '',
-  microsoftStore: '',
-};
+/** Direct Android download (sideload APK). Empty = the download button is hidden. */
+export const APK_URL = '';
+
+/** Google Analytics 4 measurement ID, e.g. 'G-ABC123XYZ'. Empty = analytics off. */
+export const GA_MEASUREMENT_ID = '';
+
+/** Optional Google Form for feedback; when empty, the in-app feedback form sends via WhatsApp/email. */
+export const FEEDBACK_FORM_URL = '';
 
 /**
  * REAL feedback from real testers only, used with their permission. The testimonials section on

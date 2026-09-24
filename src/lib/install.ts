@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { track } from './analytics';
 
 /* "Install app" support: Android/desktop Chrome fire beforeinstallprompt; iPhone needs
  * the Share → Add to Home Screen steps instead. */
@@ -36,6 +37,7 @@ export function useInstall() {
     iosHint: isIOS() && !standalone(),
     install: async () => {
       if (!deferred) return;
+      track('install_prompt');
       deferred.prompt();
       await deferred.userChoice.catch(() => null);
       deferred = null;

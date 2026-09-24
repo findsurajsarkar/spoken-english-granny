@@ -41,6 +41,13 @@ export function activatePlus(plan: PlanId, paymentId?: string, test = false) {
   write(KEY, { plan, until: until.toISOString(), paymentId, test } satisfies PlusState);
 }
 
+/** Switches Plus on until a fixed date (used by activation codes). Never shortens an existing membership. */
+export function activateUntil(plan: PlanId, until: string, paymentId: string) {
+  const current = plusState();
+  if (current && current.until >= until) return;
+  write(KEY, { plan, until, paymentId } satisfies PlusState);
+}
+
 export function cancelTestPlus() {
   write(KEY, null);
 }

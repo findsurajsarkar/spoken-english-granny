@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { trackPage } from './analytics';
 
-export type Route = '/' | '/practice' | '/talk' | '/badges' | '/history' | '/plus' | '/privacy' | '/terms' | '/refund' | '/contact';
-const ROUTES: Route[] = ['/', '/practice', '/talk', '/badges', '/history', '/plus', '/privacy', '/terms', '/refund', '/contact'];
+export type Route = '/' | '/practice' | '/talk' | '/badges' | '/history' | '/plus' | '/feedback' | '/privacy' | '/terms' | '/refund' | '/contact';
+const ROUTES: Route[] = ['/', '/practice', '/talk', '/badges', '/history', '/plus', '/feedback', '/privacy', '/terms', '/refund', '/contact'];
 export const LEGAL_ROUTES: Route[] = ['/privacy', '/terms', '/refund', '/contact'];
 
 function current(): Route {
@@ -13,8 +14,10 @@ function current(): Route {
 export function useRoute(): Route {
   const [route, setRoute] = useState<Route>(current);
   useEffect(() => {
+    trackPage(current());
     const on = () => {
       setRoute(current());
+      trackPage(current());
       window.scrollTo({ top: 0 });
     };
     window.addEventListener('hashchange', on);

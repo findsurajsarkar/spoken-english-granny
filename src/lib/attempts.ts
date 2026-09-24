@@ -1,4 +1,5 @@
 import type { Badge } from './badges';
+import { track } from './analytics';
 import { pushAttempt } from './cloud';
 import { checkEnglish } from './granny';
 import { saveAttempt } from './storage';
@@ -29,5 +30,7 @@ export async function checkAndSave(input: CheckInput): Promise<{ attempt: Attemp
   };
   const badges = saveAttempt(attempt);
   void pushAttempt(attempt);
+  track(attempt.mode === 'talk' ? 'talk_completed' : 'practice_completed', { score: analysis.score, level: input.topic.level, scenario: input.scenarioId });
+  badges.forEach((b) => track('badge_earned', { badge: b.id }));
   return { attempt, badges };
 }

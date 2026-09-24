@@ -4,7 +4,12 @@ import { FREE_DAILY_SESSIONS, PLANS, PLUS_DAILY_SESSIONS } from '../lib/plan';
 import type { Route } from '../lib/router';
 
 const email = BUSINESS.email;
-const Mail = () => (email ? <a href={`mailto:${email}`}>{email}</a> : <span>our support email (coming soon)</span>);
+const Mail = () => <a href={`mailto:${email}`}>{email}</a>;
+const WhatsApp = () => (
+  <a href={`https://wa.me/${BUSINESS.whatsapp}`} target="_blank" rel="noopener">
+    {BUSINESS.phoneDisplay}
+  </a>
+);
 
 const PAGES: Record<string, { title: string; body: ReactNode }> = {
   '/privacy': {
@@ -44,10 +49,15 @@ const PAGES: Record<string, { title: string; body: ReactNode }> = {
           <li>To manage your Plus membership.</li>
         </ul>
         <p>We do not sell your data and we do not show ads.</p>
+        <h2>Analytics</h2>
+        <p>
+          We use Google Analytics to count visits and see which features are used (for example, how many practices are finished), so we can improve Granny.
+          It uses cookies and does not receive what you say in your practices.
+        </p>
         <h2>Who processes it</h2>
         <p>
-          <strong>Puter</strong> (sign-in, AI and storage of your progress in your account), the AI model providers Puter uses to check your English, and{' '}
-          <strong>Razorpay</strong> (payments). Each follows its own privacy policy.
+          <strong>Puter</strong> (sign-in, AI and storage of your progress in your account), the AI model providers Puter uses to check your English,{' '}
+          <strong>Google Analytics</strong> (usage statistics) and <strong>Razorpay</strong> (payments). Each follows its own privacy policy.
         </p>
         <h2>Keeping and deleting your data</h2>
         <p>
@@ -58,7 +68,7 @@ const PAGES: Record<string, { title: string; body: ReactNode }> = {
         <p>Children under 18 should use Granny with a parent's or guardian's permission.</p>
         <h2>Contact</h2>
         <p>
-          Questions or requests about your data: <Mail />.
+          Questions or requests about your data: <Mail /> or WhatsApp <WhatsApp />.
         </p>
       </>
     ),
@@ -104,7 +114,7 @@ const PAGES: Record<string, { title: string; body: ReactNode }> = {
         <p>These terms are governed by the laws of India, with courts in {BUSINESS.location} having jurisdiction.</p>
         <h2>Contact</h2>
         <p>
-          <Mail />
+          <Mail /> · WhatsApp <WhatsApp />
         </p>
       </>
     ),
@@ -113,19 +123,35 @@ const PAGES: Record<string, { title: string; body: ReactNode }> = {
     title: 'Refund & Cancellation Policy',
     body: (
       <>
-        <h2>Refunds</h2>
+        <h2>Asking for a refund</h2>
         <p>
-          If you are not happy with Granny Plus, email <Mail /> within <strong>7 days of your payment</strong> and we will refund you in full. No questions,
-          just tell us what we can do better.
+          If you are not happy with Granny Plus, contact us within <strong>3 days of your payment</strong> on WhatsApp <WhatsApp /> or by email at <Mail />,
+          with your payment reference (or the phone number/UPI ID you paid from) and your Puter username.
         </p>
-        <p>After 7 days, payments are not refundable, except where required by law.</p>
-        <p>Approved refunds go back to your original payment method through Razorpay, usually within 5–7 working days.</p>
+        <ul>
+          <li>
+            <strong>Within 3 days of payment:</strong> full refund, no questions asked.
+          </li>
+          <li>
+            <strong>After 3 days:</strong> payments are not refundable, except where required by law or in the cases below.
+          </li>
+        </ul>
+        <h2>How long it takes</h2>
+        <p>
+          We reply and approve refunds within <strong>3 working days</strong>. The money then goes back to your original payment method (UPI, card or bank).
+          Your bank usually shows it within <strong>5–7 working days</strong>.
+        </p>
+        <p>We refund the full amount you paid. We do not deduct any payment-processing charges.</p>
+        <h2>Always refunded</h2>
+        <ul>
+          <li>You were charged twice for the same plan.</li>
+          <li>You paid, but Plus did not switch on and we could not fix it within 3 working days.</li>
+        </ul>
         <h2>Cancellation</h2>
         <p>
-          Plus Monthly does not renew automatically, so there is nothing to cancel: it simply ends 30 days after payment. Plus Lifetime is a one-time payment.
+          Plus Monthly does not renew automatically, so there is nothing to cancel: it ends 30 days after payment. Plus Lifetime is a one-time payment.
+          After a refund, Plus is switched off on your account.
         </p>
-        <h2>Failed or double payments</h2>
-        <p>If money was taken but Plus did not switch on, or you were charged twice, email us with your payment reference and we will fix it or refund you.</p>
       </>
     ),
   },
@@ -133,12 +159,20 @@ const PAGES: Record<string, { title: string; body: ReactNode }> = {
     title: 'Contact us',
     body: (
       <>
-        <p>We would love to hear from you: questions, problems, payment help or ideas to make Granny better.</p>
+        <p>We would love to hear from you: questions, problems, payments and refunds, or ideas to make Granny better.</p>
         <p className="contact-line">
-          📧 <Mail />
+          💬 WhatsApp / call: <WhatsApp />
         </p>
-        <p>We usually reply within 2 working days.</p>
-        <p className="muted small">{BUSINESS.name} · {BUSINESS.location}</p>
+        <p className="contact-line">
+          📧 Email: <Mail />
+        </p>
+        <p>We usually reply within 1 working day (Monday to Saturday, 10 am – 7 pm IST).</p>
+        <p>
+          Want to tell us how Granny helped you? <a href="#/feedback">Share your feedback</a>.
+        </p>
+        <p className="muted small">
+          {BUSINESS.name} · {BUSINESS.location}
+        </p>
       </>
     ),
   },

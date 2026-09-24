@@ -1,8 +1,8 @@
 /* Razorpay Checkout (https://razorpay.com/docs/payments/payment-gateway/web-integration/standard/).
  *
- * Set VITE_RAZORPAY_KEY_ID in a .env file to take real payments. Without it the app runs in
- * test mode: in development a "test upgrade" button activates Plus locally with no payment,
- * and in a production build the Upgrade buttons say "coming soon".
+ * Set VITE_RAZORPAY_KEY_ID (a GitHub repository secret for the live site) to take card/UPI
+ * payments in the app. Without it, customers buy on WhatsApp and get an activation code
+ * (see src/plusCodes.ts).
  *
  * IMPORTANT before going live: Plus status is stored in the browser, so it can be faked.
  * Add a small server (e.g. a Vercel/Netlify function) that creates Razorpay orders and
@@ -12,7 +12,6 @@ import { activatePlus, PLANS, type PlanId } from './plan';
 const KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
 export const paymentsLive = Boolean(KEY_ID);
-export const testUpgradeAllowed = !paymentsLive && import.meta.env.DEV;
 
 function loadCheckout(): Promise<void> {
   if ((window as any).Razorpay) return Promise.resolve();
@@ -28,11 +27,7 @@ function loadCheckout(): Promise<void> {
 /** Opens Razorpay Checkout; resolves true when payment succeeded and Plus is active. */
 export async function buyPlus(planId: PlanId, prefill?: { name?: string }): Promise<boolean> {
   const plan = PLANS[planId];
-  if (!paymentsLive) {
-    if (!testUpgradeAllowed) throw new Error('Payments are coming soon.');
-    activatePlus(planId, undefined, true);
-    return true;
-  }
+  if (!paymentsLive) throw new Error('Online payments are not set up yet.');
   await loadCheckout();
   return new Promise((resolve, reject) => {
     const rzp = new (window as any).Razorpay({

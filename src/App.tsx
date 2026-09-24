@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Account from './components/Account';
 import Badges from './components/Badges';
+import Feedback from './components/Feedback';
 import History from './components/History';
 import Landing from './components/Landing';
 import Legal from './components/Legal';
@@ -129,9 +130,11 @@ export default function App() {
         {route === '/talk' && <Talk settings={settings} ensureSignedIn={ensureSignedIn} onSaved={refresh} />}
         {route === '/badges' && <Badges days={days} />}
         {route === '/history' && <History items={history} />}
+        {route === '/feedback' && <Feedback username={username} />}
         {route === '/plus' && (
           <Plus
             username={username}
+            ensureSignedIn={ensureSignedIn}
             onChange={() => {
               refresh();
               void pushSummary();
@@ -141,7 +144,7 @@ export default function App() {
       </main>
 
       <footer className="foot">
-        <a href="#/">About</a> · <a href="#/privacy">Privacy</a> · <a href="#/terms">Terms</a> · <a href="#/refund">Refunds</a> ·{' '}
+        <a href="#/">About</a> · <a href="#/feedback">Feedback</a> · <a href="#/privacy">Privacy</a> · <a href="#/terms">Terms</a> · <a href="#/refund">Refunds</a> ·{' '}
         <a href="#/contact">Contact</a>
       </footer>
 

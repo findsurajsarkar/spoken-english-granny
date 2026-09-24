@@ -124,6 +124,12 @@ export default function Result({ attempt, onAgain, onNew, readOnly, newBadges = 
         </section>
       )}
 
+      {!readOnly && (
+        <p className="muted small center">
+          Is Granny helping you? <a href="#/feedback">Tell us in 1 minute</a> 💛
+        </p>
+      )}
+
       <div className="actions">
         {!readOnly && (
           <button className="btn ghost" onClick={onAgain}>

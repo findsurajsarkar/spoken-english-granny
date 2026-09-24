@@ -2,6 +2,8 @@
  * Puter uses a "user pays" model: each learner signs in with a free Puter
  * account and AI usage comes from their own allowance — no API keys here. */
 
+import { demoAsk, demoKv, isDemo } from './demo';
+
 declare global {
   interface Window {
     puter?: any;
@@ -19,6 +21,7 @@ function puter() {
 }
 
 export function isSignedIn(): boolean {
+  if (isDemo()) return true;
   try {
     return Boolean(puter().auth.isSignedIn());
   } catch {
@@ -28,6 +31,7 @@ export function isSignedIn(): boolean {
 
 /** Must be called directly from a click handler, otherwise the browser blocks the popup. */
 export async function signIn(): Promise<void> {
+  if (isDemo()) return;
   await puter().auth.signIn();
 }
 
@@ -37,6 +41,7 @@ export async function signOut(): Promise<void> {
 
 /** Puter's per-user, per-app key-value store (values up to 400 KB each). */
 export function kv() {
+  if (isDemo()) return demoKv;
   return puter().kv as {
     get: (key: string) => Promise<any>;
     set: (key: string, value: unknown) => Promise<boolean>;
@@ -46,6 +51,7 @@ export function kv() {
 }
 
 export async function getUsername(): Promise<string | null> {
+  if (isDemo()) return 'priya';
   try {
     const user = await puter().auth.getUser();
     return user?.username ?? null;
@@ -72,6 +78,7 @@ function parseJSON<T>(text: string): T {
 }
 
 async function chat(prompt: string, model?: string): Promise<string> {
+  if (isDemo()) return demoAsk(prompt);
   const opts: Record<string, unknown> = { normalize: true };
   if (model) opts.model = model;
   return textOf(await puter().ai.chat(prompt, opts));

@@ -102,3 +102,30 @@ wrap it with [Capacitor](https://capacitorjs.com/): `npm i @capacitor/core @capa
 `npx cap init`, `npx cap add android`, then `npm run build && npx cap sync`.
 Notes: inside the app webview live transcription is not available, so the Puter transcription fallback is used,
 and the microphone permission must be added to the Android/iOS manifests.
+
+## Selling Plus without a payment gateway (WhatsApp + UPI)
+
+Until Razorpay is connected, "Buy" opens WhatsApp (+91 88689 69214) with the plan and the buyer's
+Puter username. After they pay by UPI, create their activation code:
+
+```bash
+npm run plus-code -- <their-puter-username> monthly     # or: lifetime
+git commit -am "Plus code" && git push                    # live in ~1 minute
+```
+
+The script prints the code and a ready-to-send WhatsApp message. The customer enters it on the Plus page.
+
+## Product videos
+
+The three landing-page videos in `public/videos/` are recorded from the real app (demo mode, scripted
+AI answers) with a macOS voiceover. To re-record after changing the UI or the wording:
+
+```bash
+npm run dev -- --port 5188      # in one terminal
+npm run videos                  # in another (needs Google Chrome, ffmpeg, macOS `say`)
+```
+
+## Settings to fill in
+
+`src/config.ts`: support email/WhatsApp, `APK_URL` (Android download), `GA_MEASUREMENT_ID`
+(Google Analytics), `FEEDBACK_FORM_URL` (optional Google Form) and `TESTIMONIALS` (real, consented quotes only).

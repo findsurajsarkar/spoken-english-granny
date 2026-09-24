@@ -749,3 +749,318 @@
     width: 100%;
   }
 }
+
+/* ---------- header label: long on desktop, short on phones ---------- */
+.lp-short {
+  display: none;
+}
+
+/* =====================================================================
+   Phones: compact, lighter and faster. Sections aim to fit in 1–2 screens.
+   ===================================================================== */
+@media (max-width: 600px) {
+  .lp {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .lp-wrap {
+    padding: 0 16px;
+  }
+
+  /* header: small, calm "Try free" button, no expensive blur */
+  .lp-nav {
+    backdrop-filter: none;
+    background: #fff;
+  }
+  .lp-nav-in {
+    height: 56px;
+  }
+  .lp-logo {
+    font-size: 0.92rem;
+    gap: 8px;
+  }
+  .lp-logo img {
+    width: 28px;
+    height: 28px;
+  }
+  .lp-btn.lp-nav-cta {
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    border-radius: 999px;
+    box-shadow: none;
+  }
+  .lp-long {
+    display: none;
+  }
+  .lp-short {
+    display: inline;
+  }
+
+  /* buttons */
+  .lp-btn {
+    padding: 11px 18px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+  .lp-btn-lg {
+    padding: 13px 22px;
+    font-size: 1rem;
+  }
+  .lp-btn-primary {
+    box-shadow: none;
+  }
+
+  /* hero */
+  .lp-hero {
+    padding: 28px 0 36px;
+    background: linear-gradient(180deg, var(--ink-soft) 0%, #fff 90%);
+  }
+  .lp-hero-in {
+    gap: 24px;
+  }
+  .lp-eyebrow,
+  .lp-kicker {
+    font-size: 0.7rem;
+    margin-bottom: 8px;
+  }
+  .lp-hero h1 {
+    font-size: 1.85rem;
+    line-height: 1.12;
+  }
+  .lp-lead {
+    font-size: 0.98rem;
+    margin: 12px 0 18px;
+  }
+  .lp-offer .lp-btn {
+    width: 100%;
+  }
+  .lp-offer p {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+  .lp-dl-buttons {
+    margin-top: 16px;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+  .lp-store {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .lp-store svg {
+    width: 20px;
+    height: 20px;
+  }
+  .lp-store span {
+    font-size: 0.95rem;
+  }
+  .lp-store small {
+    font-size: 0.62rem;
+  }
+  .lp-hero-art {
+    height: 330px;
+    max-width: 340px;
+  }
+  .lp-phone {
+    width: 150px;
+    border-radius: 24px;
+    padding: 6px;
+    box-shadow: 0 20px 36px -22px rgba(15, 23, 42, 0.5);
+  }
+  .lp-phone img {
+    border-radius: 18px;
+  }
+  .lp-chip {
+    font-size: 0.72rem;
+    padding: 6px 10px;
+    box-shadow: 0 8px 16px -12px rgba(15, 23, 42, 0.4);
+  }
+  .lp-chip-2 {
+    bottom: 40px;
+  }
+
+  /* sections */
+  .lp-section {
+    padding: 40px 0;
+  }
+  .lp-h2 {
+    font-size: 1.4rem;
+    margin-bottom: 22px;
+  }
+
+  /* "Why Granny": 2 per row, compact */
+  .lp-why {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .lp-why-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .lp-why-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .lp-why-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1.05rem;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .lp-why-card strong {
+    font-size: 0.9rem;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+  .lp-why-card p {
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  /* How it works: 2 steps side by side */
+  .lp-flow {
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 12px;
+    max-width: none;
+  }
+  .lp-flow-shot {
+    max-width: 150px;
+    border-radius: 18px;
+    padding: 5px;
+    box-shadow: 0 16px 28px -20px rgba(15, 23, 42, 0.5);
+  }
+  .lp-flow-shot img {
+    border-radius: 14px;
+  }
+  .lp-flow-text {
+    margin-top: 10px;
+  }
+  .lp-flow-n {
+    width: 26px;
+    height: 26px;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+    box-shadow: none;
+  }
+  .lp-flow-text strong {
+    font-size: 0.9rem;
+  }
+  .lp-flow-text p {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  /* walkthrough video: side by side with its text */
+  .lp-video {
+    grid-template-columns: 130px 1fr;
+    gap: 14px;
+    margin-top: 28px;
+    padding: 14px;
+    text-align: left;
+    justify-items: stretch;
+    border-radius: 16px;
+  }
+  .lp-video-frame {
+    width: 130px;
+    border-radius: 18px;
+    padding: 5px;
+  }
+  .lp-video-frame video {
+    border-radius: 14px;
+  }
+  .lp-video h3 {
+    font-size: 1.05rem;
+    margin-bottom: 6px;
+  }
+  .lp-video p {
+    font-size: 0.82rem;
+    margin-bottom: 12px;
+  }
+  .lp-video .lp-btn-lg {
+    padding: 9px 14px;
+    font-size: 0.85rem;
+  }
+
+  /* downloads: 2 compact cards side by side */
+  .lp-downloads {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .lp-dl-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .lp-dl-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .lp-dl-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+  .lp-dl-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  .lp-dl-head strong {
+    font-size: 0.95rem;
+  }
+  .lp-dl-head span {
+    font-size: 0.72rem;
+  }
+  .lp-dl-card ol {
+    margin: 10px 0 12px;
+    padding-left: 16px;
+    font-size: 0.76rem;
+    gap: 4px;
+  }
+  .lp-dl-card .lp-btn {
+    width: 100%;
+    padding: 9px 8px;
+    font-size: 0.8rem;
+  }
+  .lp-note {
+    font-size: 0.72rem;
+    padding: 8px;
+  }
+  .lp-fine {
+    font-size: 0.8rem;
+    margin-top: 16px;
+  }
+
+  /* final CTA + footer */
+  .lp-final {
+    padding: 44px 0;
+  }
+  .lp-final h2 {
+    font-size: 1.45rem;
+  }
+  .lp-final p {
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+  }
+  .lp-footer {
+    padding: 28px 0 90px;
+    font-size: 0.88rem;
+  }
+
+  .lp-sticky {
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+  }
+  .lp-sticky .lp-btn {
+    padding: 11px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp * {
+    transition: none !important;
+  }
+}

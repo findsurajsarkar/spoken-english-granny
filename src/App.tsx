@@ -10,7 +10,7 @@ import PracticeFlow from './components/PracticeFlow';
 import Talk from './components/Talk';
 import { pushSummary, syncNow } from './lib/cloud';
 import { isPlus } from './lib/plan';
-import { getAccount, isSignedIn, signIn, signOut } from './lib/puter';
+import { getAccount, isSignedIn, loadPuter, signIn, signOut } from './lib/puter';
 import { go, LEGAL_ROUTES, useRoute, type Route } from './lib/router';
 import { clearLocal, loadDays, loadHistory, loadSettings, markVisitedApp, saveSettings } from './lib/storage';
 import type { Settings } from './lib/types';
@@ -36,6 +36,18 @@ export default function App() {
 
   useEffect(() => {
     if (route !== '/') markVisitedApp();
+  }, [route]);
+
+  // Load Puter (sign-in + AI) in the background: right away inside the app, and once the
+  // landing page has finished loading, so "Test your English" feels instant.
+  useEffect(() => {
+    const load = () => loadPuter().then(() => setSignedIn(isSignedIn())).catch(() => {});
+    if (route !== '/' && !LEGAL_ROUTES.includes(route)) {
+      load();
+      return;
+    }
+    const t = window.setTimeout(load, 2500);
+    return () => window.clearTimeout(t);
   }, [route]);
 
   const refresh = useCallback(() => {

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { APK_URL, BUSINESS } from '../config';
 import { track } from '../lib/analytics';
 import { useInstall } from '../lib/install';
@@ -66,11 +67,33 @@ function DownloadButtons({ where }: { where: string }) {
   );
 }
 
+/** Plays only while on screen (saves data and battery on phones); nothing downloads until then. */
+function LazyVideo({ src, poster, label }: { src: string; poster: string; label: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          if (!v.src) v.src = src;
+          v.play().catch(() => {});
+        } else v.pause();
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(v);
+    return () => io.disconnect();
+  }, [src]);
+  return <video ref={ref} poster={poster} muted loop playsInline controls preload="none" aria-label={label} />;
+}
+
 function WindowsInstall() {
   const { canPrompt, install } = useInstall();
   return canPrompt ? (
     <button className="lp-btn lp-btn-primary" onClick={() => (track('download_windows', { where: 'download' }), install())}>
-      ⬇ Install for Windows
+      ⬇ <span className="lp-long">Install for Windows</span>
+      <span className="lp-short">Install</span>
     </button>
   ) : (
     <p className="lp-note">The install button appears here when you open this page in Chrome or Edge on Windows.</p>
@@ -102,8 +125,9 @@ export default function Landing() {
               Download
             </a>
           </nav>
-          <button className="lp-btn lp-btn-primary lp-btn-sm" onClick={() => start('nav')}>
-            Test your English
+          <button className="lp-btn lp-btn-primary lp-btn-sm lp-nav-cta" onClick={() => start('nav')}>
+            <span className="lp-long">Test your English</span>
+            <span className="lp-short">Try free</span>
           </button>
         </div>
       </header>
@@ -131,10 +155,10 @@ export default function Landing() {
 
           <div className="lp-hero-art" aria-hidden>
             <div className="lp-phone lp-phone-back">
-              <img src="images/app-topic.jpg" alt="" />
+              <img src="images/app-topic.jpg" alt="" width={480} height={1038} decoding="async" />
             </div>
             <div className="lp-phone lp-phone-front">
-              <img src="images/app-notebook.jpg" alt="" />
+              <img src="images/app-notebook.jpg" alt="" width={480} height={1038} fetchPriority="high" />
             </div>
             <div className="lp-chip lp-chip-1">✍️ Mistakes circled</div>
             <div className="lp-chip lp-chip-2">💯 Marks out of 10</div>
@@ -169,7 +193,7 @@ export default function Landing() {
             {FLOW.map((f, i) => (
               <li key={f.title}>
                 <div className="lp-flow-shot">
-                  <img src={f.img} alt={`${f.title}: app screen`}/>
+                  <img src={f.img} alt={`${f.title}: app screen`} loading="lazy" decoding="async" width={480} height={1038} />
                 </div>
                 <div className="lp-flow-text">
                   <span className="lp-flow-n">{i + 1}</span>
@@ -181,7 +205,7 @@ export default function Landing() {
           </ol>
           <div className="lp-video">
             <div className="lp-video-frame">
-              <video src="videos/granny-walkthrough.mp4" poster="videos/granny-walkthrough.jpg" autoPlay muted loop playsInline controls aria-label="30-second walkthrough of the app" />
+              <LazyVideo src="videos/granny-walkthrough.mp4" poster="videos/granny-walkthrough.jpg" label="30-second walkthrough of the app" />
             </div>
             <div>
               <h3>See it in 30 seconds</h3>
@@ -219,7 +243,8 @@ export default function Landing() {
                 <li>Open Granny and start speaking.</li>
               </ol>
               <a className="lp-btn lp-btn-primary" href={APK_URL} download="spoken-english-granny.apk" onClick={() => track('download_apk', { where: 'download' })}>
-                ⬇ Download for Android
+                ⬇ <span className="lp-long">Download for Android</span>
+                <span className="lp-short">Download</span>
               </a>
             </div>
             <div className="lp-dl-card">

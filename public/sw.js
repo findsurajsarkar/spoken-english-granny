@@ -2,7 +2,7 @@
  * - Page loads: network first, so learners always get the newest version; cached copy if offline.
  * - Our own files and Google Fonts: served from cache, refreshed in the background.
  * - Everything else (Puter sign-in, AI, payments) always goes to the network. */
-const CACHE = 'granny-v1';
+const CACHE = 'granny-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {

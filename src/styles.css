@@ -2534,3 +2534,114 @@ a {
   color: var(--green);
   font-weight: 700;
 }
+
+/* =====================================================================
+   App on phones: slightly smaller type and controls, more on each screen.
+   ===================================================================== */
+@media (max-width: 480px) {
+  html {
+    font-size: 15px;
+  }
+  html,
+  body {
+    font-size: 15px;
+  }
+  .app {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  main {
+    gap: 12px;
+  }
+  .card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .topbar {
+    padding-top: calc(8px + env(safe-area-inset-top));
+    padding-bottom: 8px;
+  }
+  .brand img {
+    width: 28px;
+    height: 28px;
+  }
+  .plus-btn,
+  .account-btn.signin {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  .avatar-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .btn {
+    padding: 10px 16px;
+  }
+  .btn.big {
+    padding: 13px;
+    font-size: 1rem;
+    margin-top: 16px;
+  }
+  .hero {
+    padding: 4px 0;
+    gap: 12px;
+  }
+  .hero h1 {
+    font-size: 1.75rem;
+  }
+  .hero p {
+    font-size: 0.92rem;
+  }
+  .granny-face {
+    width: 56px;
+    height: 56px;
+    font-size: 2.2rem;
+  }
+  h2 {
+    font-size: 1rem;
+  }
+  .topic-title {
+    font-size: 1.8rem;
+  }
+  .topic-prompt {
+    font-size: 1rem;
+  }
+  .mic {
+    width: 108px;
+    height: 108px;
+    padding: 6px;
+  }
+  .mic-inner svg {
+    width: 32px;
+    height: 32px;
+  }
+  .marks {
+    width: 88px;
+    height: 88px;
+    padding-top: 14px;
+  }
+  .marks-num {
+    font-size: 2.8rem;
+  }
+  .stamp {
+    font-size: 1.5rem;
+  }
+  .remark {
+    font-size: 1rem;
+  }
+  .notebook {
+    --nb-line: 3.2rem;
+  }
+  .scenario {
+    padding: 12px;
+  }
+  .sc-emoji {
+    font-size: 1.6rem;
+  }
+  .bottom-tabs button span {
+    font-size: 1.15rem;
+  }
+  .bottom-tabs button {
+    font-size: 0.68rem;
+  }
+}

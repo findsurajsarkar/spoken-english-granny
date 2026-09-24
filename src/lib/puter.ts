@@ -13,6 +13,27 @@ declare global {
 /** Better model for the careful English check; topics use Puter's default model. */
 const ANALYSIS_MODEL = 'claude-sonnet-5';
 
+let loading: Promise<void> | null = null;
+
+/** Loads Puter.js on demand, so the landing page opens fast and the app loads it in the background. */
+export function loadPuter(): Promise<void> {
+  if (isDemo() || window.puter) return Promise.resolve();
+  if (!loading) {
+    loading = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://js.puter.com/v2/';
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => {
+        loading = null;
+        reject(new Error("Granny can't reach Puter right now. Please check your internet and try again."));
+      };
+      document.head.appendChild(s);
+    });
+  }
+  return loading;
+}
+
 function puter() {
   if (!window.puter) {
     throw new Error("Granny can't reach Puter right now. Please check your internet and reload the page.");
@@ -36,6 +57,7 @@ export function isSignedIn(): boolean {
  */
 export async function signIn(opts: { guest?: boolean; pickAccount?: boolean } = {}): Promise<void> {
   if (isDemo()) return;
+  await loadPuter();
   await puter().auth.signIn({
     attempt_temp_user_creation: Boolean(opts.guest),
     ...(opts.pickAccount ? { request_auth: true } : {}),
@@ -46,6 +68,7 @@ export async function signIn(opts: { guest?: boolean; pickAccount?: boolean } = 
 export async function getAccount(): Promise<{ username: string | null; guest: boolean }> {
   if (isDemo()) return { username: 'priya', guest: false };
   try {
+    await loadPuter();
     const user = await puter().auth.getUser();
     return { username: user?.username ?? null, guest: Boolean(user?.is_temp ?? user?.isTemp ?? user?.is_temporary) };
   } catch {
@@ -54,6 +77,7 @@ export async function getAccount(): Promise<{ username: string | null; guest: bo
 }
 
 export async function signOut(): Promise<void> {
+  await loadPuter();
   await puter().auth.signOut();
 }
 
@@ -91,6 +115,7 @@ function parseJSON<T>(text: string): T {
 
 async function chat(prompt: string, model?: string): Promise<string> {
   if (isDemo()) return demoAsk(prompt);
+  await loadPuter();
   const opts: Record<string, unknown> = { normalize: true };
   if (model) opts.model = model;
   return textOf(await puter().ai.chat(prompt, opts));
@@ -115,6 +140,7 @@ export async function askText(prompt: string): Promise<string> {
 export async function transcribe(audio: Blob): Promise<string> {
   if (isDemo()) return 'Last Diwali I go to my grandmother village.';
   // Give the file a name/extension that matches the phone's recording format (webm, mp4 or ogg).
+  await loadPuter();
   const type = audio.type || 'audio/webm';
   const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
   const file = new File([audio], `speech.${ext}`, { type: type.split(';')[0] });

@@ -3,4 +3,5 @@
  * of username + plan + code, so codes can't be read from this file or used by another account.
  * Commit and push after adding one: the site redeploys in about a minute. */
 export const PLUS_CODES: Array<{ h: string; plan: 'monthly' | 'lifetime'; until: string }> = [
+  { h: '65ff7631b4411be08e63bb89d05c073e9a55a5752c34cd00a58e56ebc08e2a5d', plan: 'monthly', until: '2026-10-25T03:58:52.973Z' }, // creative_fish_51930 2026-09-24
 ];

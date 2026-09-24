@@ -15,7 +15,7 @@ export const BUSINESS = {
 export const APP_URL = 'https://findsurajsarkar.github.io/spoken-english-granny/';
 
 /** Direct Android download (sideload APK). Empty = the download button is hidden. */
-export const APK_URL = '';
+export const APK_URL = 'https://github.com/findsurajsarkar/spoken-english-granny/releases/latest/download/spoken-english-granny.apk';
 
 /** Google Analytics 4 measurement ID, e.g. 'G-ABC123XYZ'. Empty = analytics off. */
 export const GA_MEASUREMENT_ID = '';

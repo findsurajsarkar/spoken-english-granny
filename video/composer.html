@@ -1,0 +1,346 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<!-- Motion-graphics composer for the product videos. Rendered frame-by-frame by
+     scripts/make-videos.mjs: window.setup(timeline) once, then window.render(t) per frame. -->
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #1d3a8a; --ink-dark: #142a66; --ink-soft: #eef2fb; --text: #0f172a; --sub: #475569;
+    --red: #c8342b; --paper: #fffef9; --rule: #cfe0f0; --green: #3f7d4e; --cream: #fbf6ec;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 720px; height: 1280px; overflow: hidden; background: #fff; font-family: Inter, sans-serif; color: var(--text); }
+  #stage { position: relative; width: 720px; height: 1280px; overflow: hidden;
+    background: radial-gradient(120% 60% at 50% 0%, var(--ink-soft) 0%, #fff 60%); }
+  .scene { position: absolute; inset: 0; opacity: 0; will-change: opacity, transform; }
+
+  /* chrome */
+  #brand { position: absolute; top: 34px; left: 36px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 22px; z-index: 5; }
+  #brand svg { color: var(--ink); }
+  #bar { position: absolute; top: 0; left: 0; height: 8px; background: var(--ink); z-index: 6; }
+  #cap { position: absolute; left: 36px; right: 36px; bottom: 44px; z-index: 6; background: rgba(15, 23, 42, .9); color: #fff;
+    font-weight: 600; font-size: 25px; line-height: 1.35; text-align: center; padding: 18px 22px; border-radius: 20px; }
+
+  /* shared text */
+  .kicker { font-weight: 800; font-size: 20px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+  .h { font-weight: 900; font-size: 60px; line-height: 1.05; letter-spacing: -.03em; }
+  .h em { font-style: normal; color: var(--ink); }
+  .sub { font-size: 28px; color: var(--sub); line-height: 1.4; font-weight: 500; }
+  .top { position: absolute; left: 48px; right: 48px; top: 110px; }
+  .center { position: absolute; left: 60px; right: 60px; top: 50%; transform: translateY(-58%); text-align: center; }
+  .word { display: inline-block; }
+
+  /* title */
+  .big-emoji { font-size: 150px; line-height: 1; margin-bottom: 30px; display: inline-block; }
+
+  /* steps */
+  .steps { margin-top: 70px; display: flex; flex-direction: column; gap: 26px; }
+  .step { display: flex; align-items: center; gap: 24px; background: #fff; border: 2px solid #e5e9f2; border-radius: 24px; padding: 26px 28px; font-size: 32px; font-weight: 700; }
+  .step .n { width: 64px; height: 64px; border-radius: 18px; background: var(--ink-soft); color: var(--ink); display: grid; place-items: center; font-weight: 900; font-size: 30px; flex: none; }
+  .step.on { border-color: var(--ink); box-shadow: 0 18px 40px -18px rgba(29,58,138,.45); }
+  .step.on .n { background: var(--ink); color: #fff; }
+  .step .ico { margin-left: auto; font-size: 38px; }
+
+  /* phone */
+  .phone { position: absolute; left: 50%; top: 318px; width: 360px; height: 779px; margin-left: -180px; border-radius: 48px; background: #0f172a; padding: 12px;
+    box-shadow: 0 50px 90px -30px rgba(29,58,138,.55); }
+  .screen { position: relative; width: 100%; height: 100%; border-radius: 38px; overflow: hidden; background: var(--cream); }
+  .screen img { position: absolute; left: 0; top: 0; width: 100%; transform-origin: 0 0; }
+  .ring { position: absolute; border: 5px solid var(--red); border-radius: 18px; box-shadow: 0 0 0 9999px rgba(15,23,42,.28); pointer-events: none; }
+  .callout { position: absolute; z-index: 3; background: var(--ink); color: #fff; font-weight: 700; font-size: 25px; line-height: 1.25; padding: 14px 18px; border-radius: 16px;
+    max-width: 280px; box-shadow: 0 14px 30px -10px rgba(15,23,42,.45); }
+  .callout .num { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--ink); font-weight: 900; font-size: 18px; margin-right: 8px; vertical-align: 2px; }
+
+  /* red pen */
+  .paper { position: absolute; left: 44px; right: 44px; top: 360px; background: var(--paper); border-radius: 22px; padding: 70px 36px 50px 86px;
+    background-image: linear-gradient(to bottom, transparent 95px, var(--rule) 95px); background-size: 100% 98px; background-position: 0 38px;
+    box-shadow: 0 30px 60px -30px rgba(15,23,42,.35); border: 2px solid #efe7d7; }
+  .paper::before { content: ''; position: absolute; top: 0; bottom: 0; left: 62px; border-left: 3px solid #e8a2a0; }
+  .sentence { font-family: Caveat, cursive; font-size: 52px; line-height: 98px; color: #24324a; font-weight: 600; }
+  .mk { position: relative; display: inline-block; }
+  .mk svg { position: absolute; left: -16px; top: 50%; margin-top: -36px; width: calc(100% + 32px); height: 76px; overflow: visible; }
+  .mk path { fill: none; stroke: var(--red); stroke-width: 4; stroke-linecap: round; }
+  .fix { position: absolute; left: 50%; bottom: 74px; transform: translateX(-50%) rotate(-3deg); white-space: nowrap; color: var(--red); font-size: 44px; font-weight: 700; margin-bottom: 8px; }
+  .stamp { position: absolute; right: 60px; top: 250px; width: 170px; height: 170px; border-radius: 50%; border: 6px solid var(--red); color: var(--red);
+    font-family: Caveat, cursive; font-weight: 700; font-size: 96px; display: flex; align-items: baseline; justify-content: center; padding-top: 30px; background: rgba(255,255,255,.9); }
+  .stamp small { font-size: 40px; }
+
+  /* explain */
+  .card { position: absolute; left: 48px; right: 48px; background: #fff; border: 2px solid #e5e9f2; border-radius: 28px; padding: 36px; box-shadow: 0 30px 60px -34px rgba(15,23,42,.35); }
+  .pair { font-size: 50px; font-weight: 800; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .pair s { color: var(--red); text-decoration-thickness: 5px; }
+  .pair b { color: var(--green); }
+  .lang { margin-top: 30px; }
+  .lang .tag { display: inline-block; font-size: 20px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); background: var(--ink-soft); padding: 6px 14px; border-radius: 999px; }
+  .lang p { font-size: 32px; line-height: 1.4; margin-top: 12px; font-weight: 500; }
+
+  /* grid */
+  .tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 60px; }
+  .tile { background: #fff; border: 2px solid #e5e9f2; border-radius: 24px; padding: 24px; display: flex; align-items: center; gap: 18px; font-size: 27px; font-weight: 700; }
+  .tile span { font-size: 50px; }
+
+  /* chat */
+  .chat { position: absolute; left: 48px; right: 48px; top: 330px; display: flex; flex-direction: column; gap: 20px; }
+  .bub { max-width: 82%; font-size: 29px; line-height: 1.4; padding: 20px 24px; border-radius: 28px; font-weight: 500; }
+  .bub.g { background: #fff; border: 2px solid #e5e9f2; border-bottom-left-radius: 8px; align-self: flex-start; }
+  .bub.m { background: var(--red); color: #fff; border-bottom-right-radius: 8px; align-self: flex-end; }
+  .who { font-size: 20px; font-weight: 800; color: var(--sub); margin-bottom: 4px; }
+  .dots i { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: var(--sub); margin: 0 4px; }
+
+  /* streak */
+  .cal { display: grid; grid-template-columns: repeat(10, 1fr); gap: 12px; margin-top: 60px; }
+  .cell { aspect-ratio: 1; border-radius: 10px; background: #e7ebf3; }
+  .counter { margin-top: 50px; display: flex; gap: 30px; }
+  .counter div { flex: 1; background: #fff; border: 2px solid #e5e9f2; border-radius: 24px; padding: 26px; text-align: center; }
+  .counter b { display: block; font-size: 80px; font-weight: 900; color: var(--green); line-height: 1; }
+  .counter span { font-size: 24px; color: var(--sub); font-weight: 600; }
+
+  /* scores */
+  .scores { margin-top: 70px; display: flex; align-items: flex-end; gap: 22px; height: 520px; }
+  .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 12px; }
+  .col .b { width: 100%; border-radius: 18px 18px 8px 8px; background: var(--ink); }
+  .col .v { font-family: Caveat, cursive; font-size: 54px; font-weight: 700; color: var(--red); }
+  .col .l { font-size: 21px; color: var(--sub); font-weight: 700; }
+
+  /* devices */
+  .devs { position: absolute; left: 0; right: 0; top: 420px; display: flex; justify-content: center; align-items: flex-end; gap: 70px; }
+  .dev-ph { width: 150px; height: 290px; border-radius: 28px; border: 12px solid #0f172a; background: var(--ink-soft); display: grid; place-items: center; font-size: 60px; }
+  .dev-lp { width: 330px; height: 210px; border-radius: 18px; border: 12px solid #0f172a; background: var(--ink-soft); display: grid; place-items: center; font-size: 60px; position: relative; }
+  .dev-lp::after { content: ''; position: absolute; left: -40px; right: -40px; bottom: -34px; height: 18px; border-radius: 0 0 16px 16px; background: #0f172a; }
+  .cloud { position: absolute; left: 50%; top: 250px; transform: translateX(-50%); font-size: 110px; }
+  .sync { position: absolute; left: 50%; top: 380px; transform: translateX(-50%); font-size: 26px; font-weight: 800; color: var(--ink); background: var(--ink-soft); padding: 10px 20px; border-radius: 999px; white-space: nowrap; }
+
+  /* share */
+  .share { position: absolute; left: 110px; right: 110px; top: 380px; background: #fff; border-radius: 30px; padding: 44px; text-align: center; border: 2px solid #e5e9f2;
+    box-shadow: 0 40px 80px -40px rgba(15,23,42,.45); }
+  .share .stamp { position: static; margin: 0 auto 24px; }
+  .share p { font-size: 32px; font-weight: 700; }
+  .wa { margin-top: 30px; display: inline-flex; gap: 12px; align-items: center; background: #25d366; color: #fff; font-weight: 800; font-size: 28px; padding: 18px 30px; border-radius: 999px; }
+
+  /* outro */
+  .logo-big { width: 170px; height: 170px; border-radius: 44px; background: var(--ink); display: inline-grid; place-items: center; margin-bottom: 40px; }
+  .cta { display: inline-block; margin-top: 44px; background: var(--ink); color: #fff; font-weight: 800; font-size: 34px; padding: 26px 46px; border-radius: 20px; }
+  .url { margin-top: 26px; font-size: 24px; color: var(--sub); font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bar"></div>
+  <div id="brand">
+    <svg viewBox="0 0 32 32" width="40" height="40"><rect width="32" height="32" rx="8" fill="currentColor"/><circle cx="16" cy="15" r="8" fill="#fff"/><circle cx="13" cy="14.5" r="2.1" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="19" cy="14.5" r="2.1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M13.5 18.3q2.5 1.8 5 0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M8 26h16" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Spoken English Granny
+  </div>
+  <div id="cap"></div>
+</div>
+<script>
+const LOOP = 'M10,22 C6,9 38,2 62,4 C86,6 98,15 95,25 C91,36 58,40 36,37 C15,35 3,28 8,17 C11,10 20,6 32,5';
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const back = (x) => { x = clamp(x); const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const prog = (t, a, len) => clamp((t - a) / len);
+const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+function rise(el, t, at, len = 0.55, dy = 40) { const p = ease(prog(t, at, len)); el.style.opacity = p; el.style.transform = `translateY(${(1 - p) * dy}px)`; }
+function pop(el, t, at, len = 0.5) { const p = prog(t, at, len); el.style.opacity = clamp(p * 2); el.style.transform = `scale(${0.4 + 0.6 * back(p)})`; }
+const words = (text) => text.split(' ').map((w) => `<span class="word">${w}</span>`).join(' ');
+function stagger(els, t, at, gap, fn = rise) { els.forEach((el, i) => fn(el, t, at + i * gap)); }
+
+let TL, scenes = [];
+const BUILD = {
+  title(d) {
+    const s = h('div', 'center');
+    if (d.emoji) s.append(h('div', 'big-emoji', d.emoji));
+    if (d.kicker) s.append(h('div', 'kicker', d.kicker));
+    const t = h('div', 'h', words(d.title)); t.style.marginTop = '22px'; s.append(t);
+    if (d.sub) { const p = h('div', 'sub', d.sub); p.style.marginTop = '28px'; s.append(p); }
+    return { root: s, run(t) {
+      const e = s.querySelector('.big-emoji'); if (e) pop(e, t, 0.1, 0.6);
+      stagger([...s.querySelectorAll('.word')], t, 0.35, 0.09);
+      const k = s.querySelector('.kicker'); if (k) rise(k, t, 0.2);
+      const p = s.querySelector('.sub'); if (p) rise(p, t, 0.9);
+    } };
+  },
+  steps(d, dur) {
+    const s = h('div', 'top'); s.append(h('div', 'kicker', d.kicker || 'How it works'), h('div', 'h', d.title));
+    const list = h('div', 'steps');
+    d.items.forEach((it, i) => list.append(h('div', 'step', `<span class="n">${i + 1}</span>${it[0]}<span class="ico">${it[1]}</span>`)));
+    s.append(list);
+    const els = [...list.children]; const gap = Math.min(0.9, (dur - 1.5) / els.length);
+    return { root: s, run(t) {
+      rise(s.children[0], t, 0.1); rise(s.children[1], t, 0.25);
+      els.forEach((el, i) => { rise(el, t, 0.7 + i * gap, 0.5, 30); el.classList.toggle('on', t >= 0.7 + i * gap && t < 0.7 + (i + 1) * gap + (i === els.length - 1 ? 99 : 0)); });
+    } };
+  },
+  phone(d, dur, shots) {
+    const shot = shots[d.shot];
+    const s = h('div');
+    const head = h('div', 'top'); head.append(h('div', 'kicker', d.kicker || ''), h('div', 'h', d.title)); head.children[1].style.fontSize = '46px';
+    const ph = h('div', 'phone'); const sc = h('div', 'screen'); const img = h('img'); img.src = shot.src; sc.append(img); ph.append(sc);
+    s.append(head, ph);
+    const W = 336, H = W * shot.h / shot.w;
+    const rings = (d.callouts || []).filter((c) => shot.rects[c.target]).map((c, i) => {
+      const r = shot.rects[c.target]; const ring = h('div', 'ring'); sc.append(ring);
+      const box = h('div', 'callout', `${d.callouts.length > 1 ? `<span class="num">${i + 1}</span>` : ''}${c.text}`); s.append(box);
+      return { c, r, ring, box };
+    });
+    const zoom = d.zoom && shot.rects[d.zoom.target];
+    return { root: s, run(t) {
+      rise(head.children[0], t, 0.05); rise(head.children[1], t, 0.15);
+      const pe = ease(prog(t, 0.2, 0.7)); ph.style.opacity = pe; ph.style.transform = `translateY(${(1 - pe) * 120}px)`;
+      // zoom towards a target area
+      let z = 1, ox = 0, oy = 0;
+      if (zoom) {
+        const p = ease(prog(t, d.zoom.at, 0.9)); z = 1 + (d.zoom.scale - 1) * p;
+        const cx = (zoom.x + zoom.w / 2) * W, cy = (zoom.y + zoom.h / 2) * H;
+        ox = (W / 2 - cx * z) * p + 0; oy = (H * 0.45 - cy * z) * p;
+        ox = Math.min(0, Math.max(W - W * z, ox)); oy = Math.min(0, Math.max(H * 1 - H * z, oy));
+      }
+      img.style.transform = `translate(${ox}px, ${oy}px) scale(${z})`;
+      rings.forEach(({ c, r, ring, box }, i) => {
+        const on = t >= c.at && (c.until == null || t < c.until);
+        const p = on ? ease(prog(t, c.at, 0.4)) : 0;
+        const x = r.x * W * z + ox - 6, y = r.y * H * z + oy - 6, w = r.w * W * z + 12, hh = r.h * H * z + 12;
+        Object.assign(ring.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: hh + 'px', opacity: p, transform: `scale(${1.15 - 0.15 * p})` });
+        // callout beside the phone, pointing at the ring's height
+        const phoneLeft = 360 - 180 + 12, screenTop = 318 + 12;
+        const bx = c.side === 'left' ? 24 : 720 - 24 - 280, by = clamp(screenTop + y + hh / 2 - 40, 330, 1050);
+        Object.assign(box.style, { left: bx + 'px', top: by + 'px', opacity: p, transform: `translateX(${(1 - p) * (c.side === 'left' ? -30 : 30)}px)` });
+        void phoneLeft;
+      });
+    } };
+  },
+  redpen(d) {
+    const s = h('div'); const head = h('div', 'top'); head.append(h('div', 'kicker', d.kicker || ''), h('div', 'h', d.title)); head.children[1].style.fontSize = '50px';
+    const paper = h('div', 'paper'); const sen = h('div', 'sentence');
+    let html = d.sentence;
+    d.marks.forEach((m, i) => { html = html.replace(m.wrong, `<span class="mk" data-i="${i}"><span class="fix">${m.right}</span>${m.wrong}<svg viewBox="0 0 100 42" preserveAspectRatio="none"><path d="${LOOP}" pathLength="1"/></svg></span>`); });
+    sen.innerHTML = html; paper.append(sen);
+    if (d.lineHeight) {
+      const lh = d.lineHeight;
+      sen.style.lineHeight = lh + 'px';
+      paper.style.backgroundImage = `linear-gradient(to bottom, transparent ${lh - 3}px, var(--rule) ${lh - 3}px)`;
+      paper.style.backgroundSize = `100% ${lh}px`;
+      paper.style.backgroundPosition = `0 ${lh * 0.4}px`;
+      paper.style.paddingTop = lh * 0.7 + 'px';
+    }
+    const stamp = h('div', 'stamp', `${d.score}<small>/10</small>`);
+    s.append(head, paper, stamp);
+    return { root: s, run(t) {
+      rise(head.children[0], t, 0.05); rise(head.children[1], t, 0.15); rise(paper, t, 0.3, 0.6, 60);
+      [...sen.querySelectorAll('.mk')].forEach((mk, i) => {
+        const at = 1.2 + i * 1.1; const path = mk.querySelector('path'); path.style.strokeDasharray = 1; path.style.strokeDashoffset = 1 - ease(prog(t, at, 0.6));
+        const fix = mk.querySelector('.fix'); const p = ease(prog(t, at + 0.5, 0.4)); fix.style.opacity = p; fix.style.transform = `translateX(-50%) rotate(-3deg) translateY(${(1 - p) * 10}px)`;
+      });
+      pop(stamp, t, 1.2 + d.marks.length * 1.1 + 0.2, 0.6); stamp.style.transform += ' rotate(-10deg)';
+    } };
+  },
+  explain(d, dur) {
+    const s = h('div'); const head = h('div', 'top'); head.append(h('div', 'kicker', d.kicker || ''), h('div', 'h', d.title)); head.children[1].style.fontSize = '50px';
+    const card = h('div', 'card'); card.style.top = '400px';
+    card.append(h('div', 'pair', `<s>${d.wrong}</s><span>→</span><b>${d.right}</b>`));
+    const langs = d.lines.map((l) => { const e = h('div', 'lang', `<span class="tag">${l[0]}</span><p>${l[1]}</p>`); card.append(e); return e; });
+    s.append(head, card);
+    const gap = (dur - 2.2) / langs.length;
+    return { root: s, run(t) {
+      rise(head.children[0], t, 0.05); rise(head.children[1], t, 0.15); rise(card, t, 0.3, 0.6, 60);
+      langs.forEach((e, i) => rise(e, t, 1.1 + i * gap, 0.5, 20));
+    } };
+  },
+  grid(d, dur) {
+    const s = h('div', 'top'); s.append(h('div', 'kicker', d.kicker || ''), h('div', 'h', d.title)); s.children[1].style.fontSize = '50px';
+    const g = h('div', 'tiles'); d.items.forEach((it) => g.append(h('div', 'tile', `<span>${it[0]}</span>${it[1]}`))); s.append(g);
+    const gap = Math.min(0.35, (dur - 1.8) / d.items.length);
+    return { root: s, run(t) { rise(s.children[0], t, 0.05); rise(s.children[1], t, 0.15); stagger([...g.children], t, 0.7, gap, (el, tt, at) => pop(el, tt, at, 0.45)); } };
+  },
+  chat(d, dur) {
+    const s = h('div'); const head = h('div', 'top'); head.append(h('div', 'kicker', d.kicker || ''), h('div', 'h', d.title)); head.children[1].style.fontSize = '46px';
+    const c = h('div', 'chat');
+    const items = d.bubbles.map((b) => { const e = h('div', `bub ${b[0] === 'g' ? 'g' : 'm'}`, `${b[0] === 'g' ? `<div class="who">${d.name || 'Granny'}</div>` : ''}${b[1]}`); c.append(e); return e; });
+    s.append(head, c);
+    const gap = (dur - 1.6) / items.length;
+    return { root: s, run(t) { rise(head.children[0], t, 0.05); rise(head.children[1], t, 0.15); items.forEach((e, i) => rise(e, t, 0.8 + i * gap, 0.45, 30)); } };
+  },
+  streak(d, dur) {
+    const s = h('div', 'top'); s.append(h('div', 'kicker', d.kicker || ''), h('div', 'h', d.title)); s.children[1].style.fontSize = '50px';
+    const cal = h('div', 'cal'); const on = [];
+    for (let i = 0; i < 50; i++) { const c = h('div', 'cell'); cal.append(c); if (i > 9 && (i < 35 ? i % 4 !== 0 : true)) on.push(c); }
+    const cnt = h('div', 'counter', `<div><b>0</b><span>day streak</span></div><div><b>0</b><span>days practised</span></div>`);
+    s.append(cal, cnt);
+    return { root: s, run(t) {
+      rise(s.children[0], t, 0.05); rise(s.children[1], t, 0.15); rise(cal, t, 0.3); rise(cnt, t, 0.5);
+      const p = prog(t, 0.8, dur - 2); const n = Math.floor(on.length * ease(p));
+      on.forEach((c, i) => { c.style.background = i < n ? ['#b9dcbf', '#6fb47d', '#3f7d4e'][i % 3] : '#e7ebf3'; });
+      cnt.children[0].querySelector('b').textContent = Math.round(15 * ease(p));
+      cnt.children[1].querySelector('b').textContent = n;
+    } };
+  },
+  scores(d, dur) {
+    const s = h('div', 'top'); s.append(h('div', 'kicker', d.kicker || ''), h('div', 'h', d.title)); s.children[1].style.fontSize = '50px';
+    const row = h('div', 'scores');
+    const cols = d.items.map(([l, v]) => { const c = h('div', 'col', `<div class="v">${v}</div><div class="b"></div><div class="l">${l}</div>`); row.append(c); return { c, v }; });
+    s.append(row);
+    const gap = (dur - 1.8) / cols.length;
+    return { root: s, run(t) {
+      rise(s.children[0], t, 0.05); rise(s.children[1], t, 0.15);
+      cols.forEach(({ c, v }, i) => { const p = ease(prog(t, 0.7 + i * gap, 0.6)); c.querySelector('.b').style.height = (p * v * 40) + 'px'; c.querySelector('.v').style.opacity = p; });
+    } };
+  },
+  devices(d) {
+    const s = h('div'); const head = h('div', 'top'); head.append(h('div', 'kicker', d.kicker || ''), h('div', 'h', d.title)); head.children[1].style.fontSize = '50px';
+    const devs = h('div', 'devs', `<div class="dev-ph">👵</div><div class="dev-lp">👵</div>`); devs.style.top = '640px';
+    const cloud = h('div', 'cloud', '☁️'); cloud.style.top = '400px';
+    const sync = h('div', 'sync', '✓ Saved to your account'); sync.style.top = '540px';
+    s.append(head, cloud, sync, devs);
+    return { root: s, run(t) { rise(head.children[0], t, 0.05); rise(head.children[1], t, 0.15); pop(cloud, t, 0.6); cloud.style.transform += ' translateX(-50%)'; cloud.style.left = '50%'; cloud.style.marginLeft = '0';
+      rise(devs, t, 0.9, 0.6, 60); const p = ease(prog(t, 1.6, 0.5)); sync.style.opacity = p; sync.style.transform = `translateX(-50%) scale(${0.8 + 0.2 * p})`; } };
+  },
+  share(d) {
+    const s = h('div'); const head = h('div', 'top'); head.append(h('div', 'kicker', d.kicker || ''), h('div', 'h', d.title)); head.children[1].style.fontSize = '50px';
+    const card = h('div', 'share', `<div class="stamp">8<small>/10</small></div><p>“Granny gave my spoken English 8/10!”</p><div class="wa">↗ Share on WhatsApp</div>`);
+    s.append(head, card);
+    return { root: s, run(t) { rise(head.children[0], t, 0.05); rise(head.children[1], t, 0.15); rise(card, t, 0.4, 0.6, 60); const st = card.querySelector('.stamp'); pop(st, t, 0.9); st.style.transform += ' rotate(-10deg)';
+      const wa = card.querySelector('.wa'); const p = prog(t, 1.8, 1.2); wa.style.transform = `scale(${1 + 0.06 * Math.sin(p * Math.PI * 2)})`; } };
+  },
+  outro(d) {
+    const s = h('div', 'center');
+    s.append(h('div', 'logo-big', `<svg viewBox="0 0 32 32" width="120" height="120"><circle cx="16" cy="15" r="8" fill="#fff"/><circle cx="13" cy="14.5" r="2.1" fill="none" stroke="#1d3a8a" stroke-width="1.2"/><circle cx="19" cy="14.5" r="2.1" fill="none" stroke="#1d3a8a" stroke-width="1.2"/><path d="M13.5 18.3q2.5 1.8 5 0" fill="none" stroke="#1d3a8a" stroke-width="1.2" stroke-linecap="round"/><path d="M8 26h16" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>`));
+    const t1 = h('div', 'h', words(d.title)); s.append(t1);
+    const sub = h('div', 'sub', d.sub); sub.style.marginTop = '24px'; s.append(sub);
+    s.append(h('div', 'cta', d.cta), h('div', 'url', d.url));
+    return { root: s, run(t) { pop(s.children[0], t, 0.1, 0.6); stagger([...t1.querySelectorAll('.word')], t, 0.4, 0.08); rise(sub, t, 0.9); pop(s.children[3], t, 1.2); rise(s.children[4], t, 1.5);
+      const c = s.children[3]; const p = prog(t, 2, 99); c.style.transform = `scale(${1 + 0.04 * Math.sin(p * 20)})`; } };
+  },
+};
+
+window.setup = (timeline) => {
+  TL = timeline;
+  const stage = document.getElementById('stage');
+  scenes = TL.scenes.map((sc) => {
+    const wrap = h('div', 'scene'); const built = BUILD[sc.type](sc.data, sc.dur, TL.shots); wrap.append(built.root); stage.insertBefore(wrap, document.getElementById('cap'));
+    return { ...sc, wrap, built };
+  });
+  return document.fonts.ready.then(() => Promise.all([...document.images].map((i) => i.complete ? 0 : new Promise((r) => (i.onload = i.onerror = r))))).then(() => true);
+};
+
+window.render = (t) => {
+  const FADE = 0.35;
+  let cap = '';
+  for (const sc of scenes) {
+    const lt = t - sc.start;
+    const visible = lt >= -0.01 && lt < sc.dur;
+    sc.wrap.style.display = visible ? 'block' : 'none';
+    if (!visible) continue;
+    const fin = clamp(lt / FADE), fout = clamp((sc.dur - lt) / FADE);
+    sc.wrap.style.opacity = Math.min(fin, sc.last ? 1 : fout);
+    sc.wrap.style.transform = `translateX(${(1 - ease(fin)) * 40 - (sc.last ? 0 : (1 - fout) * 40)}px)`;
+    sc.built.run(lt);
+    if (lt >= sc.voiceAt - 0.05) cap = sc.caption;
+  }
+  const capEl = document.getElementById('cap');
+  capEl.textContent = cap; capEl.style.opacity = cap ? 1 : 0;
+  document.getElementById('bar').style.width = (clamp(t / TL.total) * 720) + 'px';
+};
+</script>
+</body>
+</html>

@@ -126,14 +126,17 @@ export default function Landing() {
               <button className="lp-btn lp-btn-primary" onClick={() => start('hero')}>
                 Start practising free
               </button>
-              <button className="lp-btn lp-btn-ghost" onClick={() => scrollTo('demo')}>
-                ▶ Watch the demo
-              </button>
+              <a className="lp-btn lp-btn-ghost" href={APK_URL} download="spoken-english-granny.apk" onClick={() => track('download_apk', { where: 'hero' })}>
+                ⬇ Download Android app
+              </a>
             </div>
+            <button className="lp-link" onClick={() => scrollTo('demo')}>
+              ▶ Watch the 1-minute demo
+            </button>
             <ul className="lp-trust">
               <li>Free plan forever</li>
               <li>No credit card</li>
-              <li>Android & Windows</li>
+              <li>Android app & Windows</li>
             </ul>
           </div>
           <div className="lp-hero-media">
@@ -359,10 +362,10 @@ export default function Landing() {
                 </svg>
               </span>
               <strong>Android</strong>
-              <p>Download the app directly (free, about 1 MB). When asked, allow your browser to install apps.</p>
+              <p>Free app, 1.1 MB. Download it, open the file and allow your browser to install apps when asked. Needs Google Chrome on the phone.</p>
               {APK_URL ? (
-                <a className="lp-btn lp-btn-primary" href={APK_URL} onClick={() => track('download_apk')}>
-                  Download for Android (.apk)
+                <a className="lp-btn lp-btn-primary" href={APK_URL} download="spoken-english-granny.apk" onClick={() => track('download_apk')}>
+                  ⬇ Download for Android (.apk)
                 </a>
               ) : (
                 <p className="lp-note">APK coming very soon. Meanwhile, open this page in Chrome and tap “Install app”.</p>

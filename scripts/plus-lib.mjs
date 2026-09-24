@@ -32,13 +32,13 @@ export function welcomeMessage(username, plan, code) {
     ``,
     `How to activate:`,
     `1. Open Spoken English Granny`,
-    `2. Tap "Get Plus" (top right)`,
-    `3. Under "Have an activation code?", enter ${code} and tap Activate`,
+    `2. Tap "⚡ Upgrade" at the top right`,
+    `3. Scroll down, tap "Have an activation code?", enter ${code} and tap Activate`,
     ``,
     `(Please use the same account: ${username}. If the code doesn't work straight away, wait one minute and try again.)`,
     ``,
     plan === 'monthly'
       ? `Your Plus is valid for 30 days. Happy practising, beta! 🌸`
-      : `Plus is yours for life, with all 8 conversations (including job interview practice).\n🎁 Your free Grammar Guide and 30-Day Speaking Planner are waiting in the app: tap your profile → My account → Your free downloads.\nHappy practising, beta! 🌸`,
+      : `Plus is yours for life, with all 8 conversations (including job interview practice).\n🎁 Your free Grammar Guide and 30-Day Speaking Planner are waiting in the app: tap your round profile picture (top right) → Your free downloads.\nHappy practising, beta! 🌸`,
   ].join('\n');
 }

@@ -59,7 +59,14 @@ function mergeStats(a: Stats, b: Stats): Stats {
 function mergePlus(a: any, b: any) {
   if (!a) return b ?? null;
   if (!b) return a;
-  return a.until >= b.until ? a : b;
+  const winner = a.plan === 'lifetime' && b.plan !== 'lifetime' ? a : b.plan === 'lifetime' && a.plan !== 'lifetime' ? b : a.until >= b.until ? a : b;
+  // Keep every payment from both copies (history), newest first.
+  const seen = new Set<string>();
+  const purchases = [...(a.purchases ?? []), ...(b.purchases ?? [])]
+    .filter((p: { ref: string }) => (seen.has(p.ref) ? false : (seen.add(p.ref), true)))
+    .sort((x: { date: string }, y: { date: string }) => y.date.localeCompare(x.date));
+  const since = [a.since, b.since].filter(Boolean).sort()[0];
+  return { ...winner, since, purchases };
 }
 
 function merge(local: Snapshot, cloud: Snapshot): Snapshot {

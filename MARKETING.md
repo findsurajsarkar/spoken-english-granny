@@ -15,7 +15,7 @@ What makes it different from other apps:
 2. Explanations with zero grammar jargon, in Hindi/Hinglish if you want
 3. Warm, grandmother personality: encouragement, not judgement
 4. Marks that reward harder sentences, not only fewer mistakes
-5. ₹99/month, well below the usual ₹299+ for similar apps
+5. ₹149/month launch price, about half of the usual ₹299+ for similar apps
 
 ---
 
@@ -44,7 +44,8 @@ Practise spoken English with a kind AI granny. Gentle red-pen corrections.
 > • Your progress saved to your account, on every device
 >
 > FREE: 3 practices every day.
-> GRANNY PLUS: 6 practices a day and every conversation, including job interview practice.
+> PLUS MONTHLY: 6 practices a day.
+> PLUS LIFETIME: 6 practices a day, all 8 conversations including job interview practice, and a free Grammar Guide + 30-Day Speaking Planner.
 >
 > Nobody is watching. Nobody is judging. Just you, Granny, and a little practice every day.
 

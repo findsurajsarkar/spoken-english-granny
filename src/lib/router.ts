@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { trackPage } from './analytics';
 
-export type Route = '/' | '/practice' | '/talk' | '/badges' | '/history' | '/plus' | '/feedback' | '/privacy' | '/terms' | '/refund' | '/contact';
-const ROUTES: Route[] = ['/', '/practice', '/talk', '/badges', '/history', '/plus', '/feedback', '/privacy', '/terms', '/refund', '/contact'];
+export type Route = '/' | '/practice' | '/talk' | '/badges' | '/history' | '/plus' | '/account' | '/feedback' | '/privacy' | '/terms' | '/refund' | '/contact';
+const ROUTES: Route[] = ['/', '/practice', '/talk', '/badges', '/history', '/plus', '/account', '/feedback', '/privacy', '/terms', '/refund', '/contact'];
 export const LEGAL_ROUTES: Route[] = ['/privacy', '/terms', '/refund', '/contact'];
 
 function current(): Route {

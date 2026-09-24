@@ -37,6 +37,8 @@ export function welcomeMessage(username, plan, code) {
     ``,
     `(Please use the same account: ${username}. If the code doesn't work straight away, wait one minute and try again.)`,
     ``,
-    plan === 'monthly' ? `Your Plus is valid for 30 days. Happy practising, beta! 🌸` : `Plus is yours for life. Happy practising, beta! 🌸`,
+    plan === 'monthly'
+      ? `Your Plus is valid for 30 days. Happy practising, beta! 🌸`
+      : `Plus is yours for life, with all 8 conversations (including job interview practice).\n🎁 Your free Grammar Guide and 30-Day Speaking Planner are waiting in the app: tap your profile → My account → Your free downloads.\nHappy practising, beta! 🌸`,
   ].join('\n');
 }

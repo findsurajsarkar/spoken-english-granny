@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import Account from './components/Account';
+import AccountPage from './components/AccountPage';
 import Badges from './components/Badges';
 import Feedback from './components/Feedback';
 import History from './components/History';
 import Landing from './components/Landing';
 import Legal from './components/Legal';
 import Plus from './components/Plus';
+import RenewalNotice from './components/RenewalNotice';
 import PracticeFlow from './components/PracticeFlow';
 import Talk from './components/Talk';
 import { pushSummary, syncNow } from './lib/cloud';
-import { isPlus } from './lib/plan';
+import { daysLeft, isPlus, plusState } from './lib/plan';
 import { getAccount, isSignedIn, loadPuter, signIn, signOut } from './lib/puter';
 import { go, LEGAL_ROUTES, useRoute, type Route } from './lib/router';
 import { clearLocal, loadDays, loadHistory, loadSettings, markVisitedApp, saveSettings } from './lib/storage';
@@ -133,11 +135,11 @@ export default function App() {
             </button>
           ))}
         </nav>
-        <button className={`plus-btn${plus ? ' member' : ''}${route === '/plus' ? ' on' : ''}`} onClick={() => go('/plus')} title={username ? `Signed in as ${username}` : undefined}>
-          {plus ? '✨ Plus' : 'Get Plus'}
-        </button>
+        <PlusBadge plus={plus} active={route === '/plus'} />
         <Account signedIn={signedIn} username={username} guest={guest} onSignIn={handleSignIn} onSignOut={handleSignOut} />
       </header>
+
+      <RenewalNotice key={String(plus)} />
 
       <main>
         {route === '/practice' && (
@@ -147,6 +149,7 @@ export default function App() {
         {route === '/badges' && <Badges days={days} />}
         {route === '/history' && <History items={history} />}
         {route === '/feedback' && <Feedback username={username} />}
+        {route === '/account' && <AccountPage signedIn={signedIn} username={username} guest={guest} onSignIn={handleSignIn} onSignOut={handleSignOut} />}
         {route === '/plus' && (
           <Plus
             username={username}
@@ -173,5 +176,30 @@ export default function App() {
         ))}
       </nav>
     </div>
+  );
+}
+
+/** Header membership badge: 👑 Lifetime (gold), ✨ Plus (with days left near the end), or Get Plus. */
+function PlusBadge({ plus, active }: { plus: boolean; active: boolean }) {
+  const state = plus ? plusState() : null;
+  const left = daysLeft(state);
+  if (state?.plan === 'lifetime') {
+    return (
+      <button className={`plus-btn member gold${active ? ' on' : ''}`} onClick={() => go('/account')} title="Plus Lifetime member">
+        👑 Lifetime
+      </button>
+    );
+  }
+  if (state) {
+    return (
+      <button className={`plus-btn member${left !== null && left <= 4 ? ' ending' : ''}${active ? ' on' : ''}`} onClick={() => go('/account')} title="Plus Monthly member">
+        ✨ Plus{left !== null && left <= 4 ? ` · ${left}d` : ''}
+      </button>
+    );
+  }
+  return (
+    <button className={`plus-btn${active ? ' on' : ''}`} onClick={() => go('/plus')}>
+      Get Plus
+    </button>
   );
 }

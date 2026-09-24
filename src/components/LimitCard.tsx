@@ -17,7 +17,7 @@ export default function LimitCard({ onBack }: { onBack: () => void }) {
       ) : (
         <p>
           You have used today's {FREE_DAILY_SESSIONS} free practices. Wonderful work, beta! Come back tomorrow, or join <strong>Granny Plus</strong> for{' '}
-          {PLUS_DAILY_SESSIONS} practices a day and every conversation.
+          {PLUS_DAILY_SESSIONS} practices every day.
         </p>
       )}
       <div className="actions center-actions">

@@ -89,11 +89,11 @@ const PAGES: Record<string, { title: string; body: ReactNode }> = {
         <ul>
           <li>Free: {FREE_DAILY_SESSIONS} practices a day and 3 everyday conversations.</li>
           <li>
-            Plus Monthly (₹{PLANS.monthly.price}): {PLUS_DAILY_SESSIONS} practices a day and all conversations for 30 days from payment. It does not renew
+            Plus Monthly (₹{PLANS.monthly.price}): {PLUS_DAILY_SESSIONS} practices a day and the 3 everyday conversations, for 30 days from payment. It does not renew
             automatically; buy again to continue.
           </li>
           <li>
-            Plus Lifetime (₹{PLANS.lifetime.price.toLocaleString('en-IN')}, one-time): {PLUS_DAILY_SESSIONS} practices a day and all conversations for as long
+            Plus Lifetime (₹{PLANS.lifetime.price.toLocaleString('en-IN')}, one-time): {PLUS_DAILY_SESSIONS} practices a day and all 8 conversations (including job interview practice) for as long
             as {BUSINESS.name} is offered.
           </li>
         </ul>

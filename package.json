@@ -10,7 +10,8 @@
     "plus-code": "node scripts/plus-code.mjs",
     "walkthrough": "node scripts/record-walkthrough.mjs",
     "share-kit": "node scripts/make-share.mjs",
-    "activate": "node scripts/activate.mjs"
+    "activate": "node scripts/activate.mjs",
+    "freebies": "node scripts/make-freebies.mjs"
   },
   "dependencies": {
     "qrcode": "^1.5.4",

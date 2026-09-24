@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { onSyncState, type SyncState } from '../lib/cloud';
+import { daysLeft, PLANS, plusState } from '../lib/plan';
+import { go } from '../lib/router';
 
 const SYNC_TEXT: Record<SyncState, string> = {
   off: 'Not saved to an account',
@@ -41,15 +43,36 @@ export default function Account({ signedIn, username, guest, onSignIn, onSignOut
   }
 
   const initial = (username ?? '?').charAt(0).toUpperCase();
+  const plan = plusState();
+  const left = daysLeft(plan);
+  const tier = plan?.plan === 'lifetime' ? 'gold' : plan ? 'plus' : '';
   return (
     <div className="account" ref={ref}>
-      <button className={`account-btn avatar-btn sync-${sync}`} onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Your account">
+      <button className={`account-btn avatar-btn sync-${sync} ${tier}`} onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Your account">
         {initial}
+        {plan && (
+          <span className="avatar-badge" aria-hidden>
+            {plan.plan === 'lifetime' ? '👑' : '✨'}
+          </span>
+        )}
       </button>
       {open && (
         <div className="account-menu" role="menu">
           <p className="acc-name">{guest ? 'Guest account' : username ?? 'Signed in'}</p>
+          <p className={`acc-member ${tier}`}>
+            {plan ? `${plan.plan === 'lifetime' ? '👑' : '✨'} ${PLANS[plan.plan].name}${left !== null ? ` · ${left} ${left === 1 ? 'day' : 'days'} left` : ''}` : 'Free plan'}
+          </p>
           <p className={`acc-sync sync-${sync}`}>{SYNC_TEXT[sync]}</p>
+          <button
+            className="btn ghost small"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              go('/account');
+            }}
+          >
+            My account
+          </button>
           {guest ? (
             <>
               <p className="muted small">You're practising as a guest. Save your progress with Google so you never lose it, and use it on other devices.</p>

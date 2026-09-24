@@ -3,7 +3,7 @@ import { hasLiveTranscription, useRecorder, type Recording } from '../hooks/useR
 import type { Badge } from '../lib/badges';
 import { checkAndSave } from '../lib/attempts';
 import { learnerText, nextReply, talkTopic } from '../lib/granny';
-import { canPractise, freeLeftToday, isPlus } from '../lib/plan';
+import { canPractise, freeLeftToday, hasAllConversations, isPlus } from '../lib/plan';
 import { transcribe } from '../lib/puter';
 import { go } from '../lib/router';
 import { SCENARIOS, TALK_TURNS, type Scenario } from '../lib/scenarios';
@@ -30,6 +30,7 @@ export default function Talk({ settings, ensureSignedIn, onSaved }: Props) {
   const [stage, setStage] = useState<Stage>({ name: 'pick' });
   const [error, setError] = useState<string | null>(null);
   const plus = isPlus();
+  const allTalks = hasAllConversations();
 
   const show = (s: Stage) => {
     setStage(s);
@@ -37,7 +38,7 @@ export default function Talk({ settings, ensureSignedIn, onSaved }: Props) {
   };
 
   const begin = async (scenario: Scenario) => {
-    if (scenario.plus && !plus) return go('/plus');
+    if (scenario.plus && !allTalks) return go('/plus');
     if (!canPractise()) return show({ name: 'limit' });
     if (!(await ensureSignedIn())) {
       setError('Sign-in was closed. Granny needs you to sign in with Puter to use her AI.');
@@ -97,15 +98,18 @@ export default function Talk({ settings, ensureSignedIn, onSaved }: Props) {
               </p>
             </div>
           </section>
-          {!plus && (
+          {!allTalks && (
             <p className="free-note">
-              {freeLeftToday()} of 3 free practices left today · <button className="btn link inline" onClick={() => go('/plus')}>Unlock all conversations ✨</button>
+              {!plus && `${freeLeftToday()} of 3 free practices left today · `}
+              <button className="btn link inline" onClick={() => go('/plus')}>
+                Unlock job interview & all conversations with Lifetime 👑
+              </button>
             </p>
           )}
           {error && <p className="error banner">{error}</p>}
           <div className="scenario-grid">
             {SCENARIOS.map((s) => {
-              const locked = s.plus && !plus;
+              const locked = s.plus && !allTalks;
               return (
                 <button key={s.id} className={`scenario${locked ? ' locked' : ''}`} onClick={() => begin(s)}>
                   <span className="sc-emoji" aria-hidden>
@@ -113,7 +117,7 @@ export default function Talk({ settings, ensureSignedIn, onSaved }: Props) {
                   </span>
                   <strong>{s.title}</strong>
                   <span className="muted small">{s.desc}</span>
-                  {locked && <span className="lock">✨ Plus</span>}
+                  {locked && <span className="lock">👑 Lifetime</span>}
                 </button>
               );
             })}

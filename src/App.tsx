@@ -179,27 +179,32 @@ export default function App() {
   );
 }
 
-/** Header membership badge: 👑 Lifetime (gold), ✨ Plus (with days left near the end), or Get Plus. */
+/** Header upgrade button: "⚡ Upgrade" (free), "👑 Upgrade" / "⏳ Renew" (Monthly), or "👑 Lifetime". Opens the Plus page. */
 function PlusBadge({ plus, active }: { plus: boolean; active: boolean }) {
   const state = plus ? plusState() : null;
   const left = daysLeft(state);
   if (state?.plan === 'lifetime') {
     return (
-      <button className={`plus-btn member gold${active ? ' on' : ''}`} onClick={() => go('/plus')} title="Plus Lifetime member">
+      <button className={`plus-btn member gold${active ? ' on' : ''}`} onClick={() => go('/plus')} title="You have Plus Lifetime">
         👑 Lifetime
       </button>
     );
   }
   if (state) {
+    const ending = left !== null && left <= 4;
     return (
-      <button className={`plus-btn member${left !== null && left <= 4 ? ' ending' : ''}${active ? ' on' : ''}`} onClick={() => go('/plus')} title="Plus Monthly member">
-        ✨ Plus{left !== null && left <= 4 ? ` · ${left}d` : ''}
+      <button
+        className={`plus-btn${ending ? ' member ending' : ''}${active ? ' on' : ''}`}
+        onClick={() => go('/plus')}
+        title={ending ? 'Renew your Plus Monthly' : 'Upgrade to Lifetime: all 8 conversations'}
+      >
+        {ending ? `⏳ Renew · ${left}d` : '👑 Upgrade'}
       </button>
     );
   }
   return (
-    <button className={`plus-btn${active ? ' on' : ''}`} onClick={() => go('/plus')}>
-      Get Plus
+    <button className={`plus-btn${active ? ' on' : ''}`} onClick={() => go('/plus')} title="Upgrade: more practice and conversations">
+      ⚡ Upgrade
     </button>
   );
 }

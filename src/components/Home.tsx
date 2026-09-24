@@ -65,11 +65,11 @@ export default function Home({ settings, onSettings, days, signedIn, loading, er
         </div>
 
         <button className="btn primary big" onClick={onStart} disabled={loading}>
-          {loading ? 'Granny is thinking of a topic…' : signedIn ? 'Give me a topic' : 'Sign in with Puter & start'}
+          {loading ? 'Granny is thinking of a topic…' : signedIn ? 'Give me a topic' : 'Sign in & start'}
         </button>
         {!signedIn && (
           <p className="muted small center">
-            Granny uses Puter for her AI. It's free: sign in once with a Puter account and you never need an API key.
+            Free: sign in once with Google (through Puter, which runs Granny's AI). Your progress is saved to your account.
           </p>
         )}
         {error && <p className="error center">{error}</p>}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { buyPlus, paymentsLive, testUpgradeAllowed } from '../lib/payments';
 import { cancelTestPlus, PLANS, plusState, type PlanId } from '../lib/plan';
+import { canSellHere } from '../lib/platform';
 import { go } from '../lib/router';
 import Pricing from './Pricing';
 
@@ -63,12 +64,16 @@ export default function Plus({ username, onChange }: { username: string | null; 
 
       {msg && <p className={msg.ok ? 'success banner' : 'error banner'}>{msg.text}</p>}
 
+      {!canSellHere && !state && (
+        <p className="muted center">Granny Plus can't be bought inside this app yet. If you already have Plus, sign in and it will appear automatically.</p>
+      )}
+
       <Pricing
         onFree={() => go('/practice')}
         onPlus={buy}
         busy={busy}
-        plusDisabled={(!paymentsLive && !testUpgradeAllowed) || state?.plan === 'lifetime'}
-        plusLabel={paymentsLive ? (state ? 'Extend Plus' : 'Get Plus') : testUpgradeAllowed ? 'Test upgrade (no payment)' : 'Coming soon'}
+        plusDisabled={!canSellHere || (!paymentsLive && !testUpgradeAllowed) || state?.plan === 'lifetime'}
+        plusLabel={!canSellHere ? 'Not available in this app' : paymentsLive ? (state ? 'Extend Plus' : 'Get Plus') : testUpgradeAllowed ? 'Test upgrade (no payment)' : 'Coming soon'}
       />
 
       {!paymentsLive && (

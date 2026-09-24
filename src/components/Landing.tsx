@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { go } from '../lib/router';
 import type { Mistake } from '../lib/types';
+import { canSellHere } from '../lib/platform';
+import { shareText } from '../lib/share';
+import Devices from './Devices';
 import Notebook from './Notebook';
 import Pricing from './Pricing';
+import Showcase from './Showcase';
+import Testimonials from './Testimonials';
 
 const SAMPLE_TEXT = 'Yesterday I go to the market with my mother. We buyed many vegetables and I am liking the fresh mangoes.';
 const SAMPLE_MISTAKES: Mistake[] = [
@@ -56,6 +61,9 @@ export default function Landing() {
         <nav>
           <a href="#features" onClick={(e) => (e.preventDefault(), document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }))}>
             Features
+          </a>
+          <a href="#devices" onClick={(e) => (e.preventDefault(), document.getElementById('devices')?.scrollIntoView({ behavior: 'smooth' }))}>
+            Download
           </a>
           <a href="#pricing" onClick={(e) => (e.preventDefault(), document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }))}>
             Pricing
@@ -137,6 +145,8 @@ export default function Landing() {
         </ol>
       </section>
 
+      <Showcase />
+
       <section id="features" className="l-features">
         <h2 className="l-h2">Everything you need to speak with confidence</h2>
         <div className="feature-grid">
@@ -161,10 +171,14 @@ export default function Landing() {
         </div>
       </section>
 
+      <Testimonials />
+
+      <Devices />
+
       <section id="pricing" className="l-pricing">
         <h2 className="l-h2">Simple pricing</h2>
         <p className="center muted">Start free. Upgrade when you want to practise more.</p>
-        <Pricing onFree={() => go('/practice')} onPlus={() => go('/plus')} />
+        <Pricing onFree={() => go('/practice')} onPlus={() => go('/plus')} hidePlusButtons={!canSellHere} />
       </section>
 
       <section className="l-faq">
@@ -184,9 +198,17 @@ export default function Landing() {
 
       <section className="l-final">
         <h2>Granny is waiting for you, beta.</h2>
-        <button className="btn primary big-inline" onClick={() => go('/practice')}>
-          Start practising free
-        </button>
+        <div className="l-cta center-cta">
+          <button className="btn primary big-inline" onClick={() => go('/practice')}>
+            Start practising free
+          </button>
+          <button
+            className="btn ghost big-inline on-red"
+            onClick={() => shareText('Practise spoken English with a kind granny who never laughs at your mistakes. Free to try:')}
+          >
+            Share with a friend
+          </button>
+        </div>
       </section>
 
       <footer className="foot">

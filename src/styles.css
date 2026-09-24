@@ -2165,3 +2165,262 @@ a {
 .install-emoji {
   font-size: 2rem;
 }
+
+/* ---------- landing: showcase, devices, testimonials ---------- */
+.phones {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.phone {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.phone figcaption {
+  font-weight: 800;
+  text-align: center;
+}
+
+.phone-screen {
+  width: 250px;
+  height: 480px;
+  border-radius: 34px;
+  border: 10px solid #2b2220;
+  background: var(--bg);
+  box-shadow: 0 18px 40px rgba(59, 47, 42, 0.18);
+  overflow: hidden;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.featured-phone .phone-screen {
+  width: 290px;
+  height: 520px;
+}
+
+.ps-topic {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.ps-topic h3 {
+  font-family: var(--pen);
+  color: var(--brand);
+  font-size: 1.6rem;
+  margin-top: 6px;
+}
+
+.ps-topic p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+}
+
+.ps-topic ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.ps-mic {
+  width: 104px;
+  height: 104px;
+  margin: 14px auto 0;
+  border-radius: 50%;
+  padding: 6px;
+  background: conic-gradient(var(--red) 170deg, var(--red-soft) 0);
+}
+
+.ps-mic span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #fff;
+  position: relative;
+}
+
+.ps-mic span::after {
+  content: '';
+  position: absolute;
+  inset: 34%;
+  border-radius: 5px;
+  background: var(--red);
+}
+
+.ps-caption {
+  text-align: center;
+  color: var(--muted);
+  margin: 0;
+  font-weight: 700;
+}
+
+.ps-marks {
+  align-self: center;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  border: 3px solid var(--red);
+  color: var(--red);
+  font-family: var(--pen);
+  font-size: 2.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  padding-top: 16px;
+  transform: rotate(-8deg);
+}
+
+.ps-marks span {
+  font-size: 1.1rem;
+}
+
+.ps-grade {
+  margin: 0;
+  text-align: center;
+  font-family: var(--pen);
+  font-size: 1.5rem;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.ps-notebook .notebook {
+  --nb-line: 2.9rem;
+  padding: 6px 10px 12px 34px;
+  font-size: 0.8rem;
+}
+
+.ps-notebook .notebook::before {
+  left: 24px;
+}
+
+.ps-notebook .nb-head {
+  height: var(--nb-line);
+}
+
+.ps-notebook .nb-date {
+  display: none;
+}
+
+.ps-notebook .nb-title {
+  font-size: 1rem;
+}
+
+.ps-notebook .nb-text {
+  font-size: 1rem;
+}
+
+.ps-notebook .mk-fix {
+  font-size: 1.15rem;
+}
+
+.chat-screen {
+  gap: 8px;
+}
+
+.chat-screen .bubble {
+  max-width: 88%;
+  font-size: 0.85rem;
+}
+
+.ps-chat-title {
+  margin: 0 0 6px;
+  text-align: center;
+  font-weight: 800;
+}
+
+@media (max-width: 860px) {
+  .phones .phone:not(.featured-phone) {
+    display: none;
+  }
+}
+
+.device-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 8px;
+}
+
+@media (max-width: 860px) {
+  .device-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .device-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.device {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.device p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.device-icon {
+  font-size: 1.9rem;
+}
+
+.l-devices > p {
+  margin: -8px 0 20px;
+}
+
+.center-cta {
+  justify-content: center;
+}
+
+.quote-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.quote {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quote blockquote {
+  margin: 0;
+  font-family: var(--hand);
+  font-size: 1.1rem;
+}
+
+.quote figcaption {
+  display: flex;
+  flex-direction: column;
+}
+
+.btn.ghost.on-red {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.share-score {
+  margin-top: 8px;
+}

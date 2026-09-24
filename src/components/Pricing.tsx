@@ -21,9 +21,10 @@ interface Props {
   busy?: PlanId | null;
   plusLabel?: string;
   plusDisabled?: boolean;
+  hidePlusButtons?: boolean;
 }
 
-export default function Pricing({ onFree, onPlus, busy, plusLabel, plusDisabled }: Props) {
+export default function Pricing({ onFree, onPlus, busy, plusLabel, plusDisabled, hidePlusButtons }: Props) {
   return (
     <div className="pricing">
       <div className="price-card">
@@ -56,9 +57,11 @@ export default function Pricing({ onFree, onPlus, busy, plusLabel, plusDisabled 
                 <li key={f}>{f}</li>
               ))}
             </ul>
-            <button className="btn primary" onClick={() => onPlus(id)} disabled={plusDisabled || busy != null}>
-              {busy === id ? 'Opening…' : plusLabel ?? 'Get Plus'}
-            </button>
+            {!hidePlusButtons && (
+              <button className="btn primary" onClick={() => onPlus(id)} disabled={plusDisabled || busy != null}>
+                {busy === id ? 'Opening…' : plusLabel ?? 'Get Plus'}
+              </button>
+            )}
           </div>
         );
       })}

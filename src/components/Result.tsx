@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { gradeFor } from '../lib/grading';
 import type { Badge } from '../lib/badges';
 import type { Attempt } from '../lib/types';
+import { shareText } from '../lib/share';
 import { canSpeak, speak } from '../lib/voice';
 import NewBadges from './NewBadges';
 import Notebook, { splitTranscript } from './Notebook';
@@ -38,6 +39,14 @@ export default function Result({ attempt, onAgain, onNew, readOnly, newBadges = 
           <div className="stamp">{grade.label}</div>
           <p className="remark">{analysis.remark}</p>
           <p className="signed">— Granny</p>
+          <button
+            className="btn ghost small share-score"
+            onClick={() =>
+              shareText(`Granny gave my spoken English ${analysis.score}/10 (${grade.label})! Practise with a kind granny who never laughs at mistakes:`)
+            }
+          >
+            Share my score
+          </button>
           <p className="meta">
             {analysis.mistakes.length} {analysis.mistakes.length === 1 ? 'mistake' : 'mistakes'} · {analysis.sentenceLevel} sentences · {topic.level}
           </p>

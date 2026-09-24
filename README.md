@@ -1,5 +1,7 @@
 # Spoken English Granny 👵
 
+**Live app:** https://findsurajsarkar.github.io/spoken-english-granny/ · Publishing guide: [STORE.md](STORE.md) · Marketing kit: [MARKETING.md](MARKETING.md)
+
 Practise speaking English with a kind granny who never laughs at your mistakes.
 
 Granny gives you a fresh topic, you speak about it, and she checks your "notebook" with a red pen:

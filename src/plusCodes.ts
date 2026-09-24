@@ -4,4 +4,5 @@
  * Commit and push after adding one: the site redeploys in about a minute. */
 export const PLUS_CODES: Array<{ h: string; plan: 'monthly' | 'lifetime'; until: string }> = [
   { h: '65ff7631b4411be08e63bb89d05c073e9a55a5752c34cd00a58e56ebc08e2a5d', plan: 'monthly', until: '2026-10-25T03:58:52.973Z' }, // creative_fish_51930 2026-09-24
+  { h: '6e366c99d3fc3ab2ef279022e7f38eab5392ddaad9337b7c0e504d441aada6b2', plan: 'lifetime', until: '2999-09-24T04:49:08.133Z' }, // bold_bicycle_807768 2026-09-24
 ];

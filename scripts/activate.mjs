@@ -30,7 +30,14 @@ if (!plan || !username) {
   process.exit(1);
 }
 
-console.log(`\nCustomer: ${username}   Plan: ${plan === 'monthly' ? 'Plus Monthly (₹99)' : 'Plus Lifetime (₹2,999)'}`);
+// Current prices come from the app itself (src/lib/plan.ts), so this never shows an old price.
+const planSrc = readFileSync(new URL('../src/lib/plan.ts', import.meta.url), 'utf8');
+const priceOf = (id) => Number(planSrc.match(new RegExp(`${id}:\\s*{[\\s\\S]*?price:\\s*(\\d+)`))?.[1] ?? NaN);
+const price = priceOf(plan);
+const paidAmount = text.match(/₹\s?([\d,]+)/)?.[1]?.replace(/,/g, '');
+console.log(`\nCustomer: ${username}   Plan: Plus ${plan === 'monthly' ? 'Monthly' : 'Lifetime'} (₹${price.toLocaleString('en-IN')})`);
+if (paidAmount && Number(paidAmount) !== price) console.log(`⚠ The message says ₹${Number(paidAmount).toLocaleString('en-IN')}, but the current price is ₹${price.toLocaleString('en-IN')}. Check the amount you received.`);
+if (/want to buy/i.test(text) && !/have paid/i.test(text)) console.log('ℹ This is an order request, not a payment confirmation. Send UPI details first; activate after the money arrives.');
 const order = text.match(/Order:\s*(GR[A-Z0-9]+)/i)?.[1];
 const ref = text.match(/UPI reference:\s*([A-Za-z0-9]{6,})/i)?.[1];
 if (order || ref) console.log(`Match this in your UPI app → ${order ? `note contains ${order}` : ''}${order && ref ? ', ' : ''}${ref ? `reference ${ref}` : ''}`);

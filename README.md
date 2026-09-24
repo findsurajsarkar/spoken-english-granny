@@ -106,14 +106,15 @@ and the microphone permission must be added to the Android/iOS manifests.
 ## Selling Plus without a payment gateway (WhatsApp + UPI)
 
 Until Razorpay is connected, "Buy" opens WhatsApp (+91 88689 69214) with the plan and the buyer's
-Puter username. After they pay by UPI, create their activation code:
+Puter username. **After the money has arrived in your bank/UPI app:**
 
-```bash
-npm run plus-code -- <their-puter-username> monthly     # or: lifetime
-git commit -am "Plus code" && git push                    # live in ~1 minute
-```
+1. Copy the customer's whole WhatsApp message.
+2. Run `npm run activate` on your Mac. It finds the username and plan, creates the code, publishes it
+   (live in about a minute) and copies a welcome reply with the code to your clipboard.
+3. Paste the reply into WhatsApp.
 
-The script prints the code and a ready-to-send WhatsApp message. The customer enters it on the Plus page.
+Manual alternative: `npm run plus-code -- <username> <monthly|lifetime>`, then `git commit -am "Plus code" && git push`.
+Test without saving anything: `npm run activate -- --dry "<message>"`.
 
 ## Walkthrough video
 

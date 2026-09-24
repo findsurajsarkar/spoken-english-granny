@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "plus-code": "node scripts/plus-code.mjs",
     "walkthrough": "node scripts/record-walkthrough.mjs",
-    "share-kit": "node scripts/make-share.mjs"
+    "share-kit": "node scripts/make-share.mjs",
+    "activate": "node scripts/activate.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

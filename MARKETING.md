@@ -106,3 +106,62 @@ App Store policy, and can get the app removed. Collect real ones instead; they c
 | 4 | Turn on Plus payments once Razorpay + the server-side check are live. Early-bird offer if needed. |
 
 Track which posts bring users by adding `?ref=whatsapp`, `?ref=insta` etc. to the link you share.
+
+---
+
+# Go-to-market: free launch → paying customers
+
+We launch **free-only** first. The goal of the first 60 days is not revenue. It is to prove three things:
+people **start** (activation), people **come back** (retention), and people **would pay** (waitlist).
+Charge only after those numbers look good.
+
+## The funnel and what to measure
+
+| Stage | What it means for Granny | Measure | Good target (first 30 days) |
+|---|---|---|---|
+| Reach | People see a post, reel or link | Link clicks per channel (`?ref=`) | 3,000 visits |
+| Activation | Signs in and finishes 1 practice | % of visitors who finish a practice | 25% |
+| Retention | Comes back on later days | Day-1 / Day-7 return rate | 30% / 15% |
+| Referral | Shares a score or the link | Shares per 100 users | 10 |
+| Revenue signal | Joins the Plus waitlist | Waitlist sign-ups | 50–100 |
+
+To see these numbers you need **analytics** (free: Microsoft Clarity, Google Analytics or GoatCounter).
+Without it you are marketing blind. Add it before promoting.
+
+## Where to find the first 1,000 learners (India)
+
+1. **WhatsApp & Telegram groups:** college batches, job-seeker groups, "spoken English" groups. Use the
+   Hinglish message above. Personal messages beat broadcasts.
+2. **Instagram Reels / YouTube Shorts:** the "Granny corrects my English" format (red circles drawing in).
+   Post 3–4 a week and try different mistakes. This is the channel most likely to take off on its own.
+3. **Colleges & placement cells:** offer Granny free to final-year students for interview practice.
+   Ask the placement officer to share it. One college can bring 200–500 users.
+4. **Coaching centres & NGOs:** spoken-English institutes, skill-development centres and BPO/call-centre
+   trainers. Their students need daily practice between classes, and they can become **paying B2B
+   customers** later.
+5. **Micro-influencers** (10k–100k education/career creators): offer free lifetime Plus for an honest
+   review. Always mark it as a collaboration or ad.
+6. **Answer questions** on Quora, Reddit (r/india, r/EnglishLearning) and Facebook groups: "How do I stop
+   being scared to speak English?" Help first, link second.
+
+## Turning free users into paying customers (when payments are ready)
+
+1. **Build the waitlist now.** Show "Granny Plus is coming soon: get the early-bird price" with a sign-up
+   (Google Form is enough). Anyone who hits the 3-a-day limit sees it. This is your best sign of demand.
+2. **Launch to the waitlist first** with an honest limited offer, e.g. Lifetime ₹1,999 for the first 100
+   (normally ₹2,999), or the first month for ₹49. Email/WhatsApp the waitlist on launch day.
+3. **Upgrade moments** (where people are most willing to pay):
+   - right after a good score ("Keep your streak going: practise 6 times a day with Plus"),
+   - when they reach the daily limit (the "Granny's nap" screen),
+   - when they tap a locked conversation, especially **Job interview** (a strong reason to pay).
+4. **B2B is the biggest opportunity.** Sell seats to coaching centres, colleges and BPO trainers at around
+   ₹49 per student per month (minimum 25 students). One institute = 25–200 paying users with a single sale.
+   Later, a simple "teacher view" of students' streaks and scores makes this much easier to sell.
+5. **Streak loss is your retention tool.** A daily WhatsApp reminder ("Granny misses you 👵, 2 minutes
+   today?") to users who opt in keeps streaks alive. People pay to keep habits they've built.
+
+## Simple weekly routine for the founder
+
+- Mon: post 1 reel + share in 5 groups · Tue: contact 2 colleges/coaching centres
+- Wed: post 1 reel · Thu: talk to 3 users on the phone (what do they like, what's missing?)
+- Fri: post 1 reel + add new real testimonials · Weekend: check the numbers, decide one improvement

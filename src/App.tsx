@@ -12,7 +12,7 @@ import { pushSummary, syncNow } from './lib/cloud';
 import { isPlus } from './lib/plan';
 import { getUsername, isSignedIn, signIn, signOut } from './lib/puter';
 import { go, LEGAL_ROUTES, useRoute, type Route } from './lib/router';
-import { clearLocal, hasVisitedApp, loadDays, loadHistory, loadSettings, markVisitedApp, saveSettings } from './lib/storage';
+import { clearLocal, loadDays, loadHistory, loadSettings, markVisitedApp, saveSettings } from './lib/storage';
 import type { Settings } from './lib/types';
 
 const TABS: Array<{ route: Route; label: string; icon: string }> = [
@@ -30,11 +30,6 @@ export default function App() {
   const [signedIn, setSignedIn] = useState(isSignedIn);
   const [username, setUsername] = useState<string | null>(null);
   const [plus, setPlus] = useState(isPlus);
-
-  // Returning learners skip the landing page when they open the bare URL.
-  useEffect(() => {
-    if (!window.location.hash && hasVisitedApp()) go('/practice');
-  }, []);
 
   useEffect(() => {
     if (route !== '/') markVisitedApp();

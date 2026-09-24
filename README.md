@@ -105,8 +105,14 @@ and the microphone permission must be added to the Android/iOS manifests.
 
 ## Selling Plus without a payment gateway (WhatsApp + UPI)
 
-Until Razorpay is connected, "Buy" opens WhatsApp (+91 88689 69214) with the plan and the buyer's
-Puter username. **After the money has arrived in your bank/UPI app:**
+Until Razorpay is connected:
+
+- **With a UPI ID** set in `src/config.ts` (`UPI.id`): "Buy with UPI" shows a UPI QR and a "Pay with UPI app"
+  button with the amount and a note (order number + username) filled in. After paying, the customer taps
+  "I've paid" and WhatsApp opens with their order number, UPI reference and username.
+- **Without a UPI ID**: "Buy on WhatsApp" opens WhatsApp (+91 88689 69214) with the plan and username.
+
+**After the money has arrived in your bank/UPI app:**
 
 1. Copy the customer's whole WhatsApp message.
 2. Run `npm run activate` on your Mac. It finds the username and plan, creates the code, publishes it

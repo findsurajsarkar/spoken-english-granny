@@ -2645,3 +2645,136 @@ a {
     font-size: 0.68rem;
   }
 }
+
+/* ---------- UPI payment ---------- */
+.upi-pay {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 2px solid var(--brand);
+  scroll-margin-top: 80px;
+}
+
+a.btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upi-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.upi-steps li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upi-steps span {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--line);
+  color: var(--ink);
+  font-size: 0.72rem;
+}
+
+.upi-steps li.on {
+  color: var(--brand);
+}
+
+.upi-steps li.on span {
+  background: var(--brand);
+  color: #fff;
+}
+
+.upi-body {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.upi-qr {
+  width: 200px;
+  height: 200px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 6px;
+}
+
+.upi-info {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upi-info p {
+  margin: 0;
+}
+
+.upi-open {
+  align-self: flex-start;
+}
+
+.upi-id {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upi-id code {
+  font-size: 1rem;
+  font-weight: 700;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  word-break: break-all;
+}
+
+.upi-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px dashed var(--line);
+  padding-top: 14px;
+}
+
+.upi-confirm .field input {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font: inherit;
+  background: #fff;
+}
+
+.upi-confirm .btn {
+  align-self: flex-start;
+}
+
+@media (max-width: 480px) {
+  .upi-qr {
+    width: 170px;
+    height: 170px;
+  }
+  .upi-body {
+    justify-content: center;
+  }
+}

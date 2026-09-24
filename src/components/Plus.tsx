@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { BUSINESS } from '../config';
+import { BUSINESS, UPI } from '../config';
 import { track } from '../lib/analytics';
 import { redeemCode } from '../lib/codes';
+import { getAccount } from '../lib/puter';
 import { buyPlus, paymentsLive } from '../lib/payments';
 import { cancelTestPlus, PLANS, plusState, type PlanId } from '../lib/plan';
 import { canSellHere } from '../lib/platform';
 import { go } from '../lib/router';
 import Pricing from './Pricing';
+import UpiPay from './UpiPay';
 
 interface Props {
   username: string | null;
@@ -19,6 +21,7 @@ export default function Plus({ username, ensureSignedIn, onChange }: Props) {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [code, setCode] = useState('');
   const [checking, setChecking] = useState(false);
+  const [upi, setUpi] = useState<{ plan: PlanId; username: string } | null>(null);
   const state = plusState();
 
   const buyOnWhatsApp = async (plan: PlanId) => {
@@ -34,9 +37,26 @@ export default function Plus({ username, ensureSignedIn, onChange }: Props) {
     setMsg({ ok: true, text: 'WhatsApp is opening. We will send you the UPI details, and your activation code after payment.' });
   };
 
+  /** Pay by UPI inside the app (when a UPI ID is set in config.ts). */
+  const buyWithUpi = async (plan: PlanId) => {
+    if (!(await ensureSignedIn())) {
+      setMsg({ ok: false, text: 'Please sign in first, so your Plus can be added to your account.' });
+      return;
+    }
+    const name = username ?? (await getAccount()).username;
+    if (!name) {
+      setMsg({ ok: false, text: 'Please sign in first, so your Plus can be added to your account.' });
+      return;
+    }
+    setMsg(null);
+    setUpi({ plan, username: name });
+    track('plus_upi', { plan });
+    setTimeout(() => document.querySelector('.upi-pay')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  };
+
   const buy = async (plan: PlanId) => {
     track('plus_click', { plan });
-    if (!paymentsLive) return buyOnWhatsApp(plan);
+    if (!paymentsLive) return UPI.id ? buyWithUpi(plan) : buyOnWhatsApp(plan);
     setBusy(plan);
     setMsg(null);
     try {
@@ -123,15 +143,26 @@ export default function Plus({ username, ensureSignedIn, onChange }: Props) {
         busy={busy}
         hidePlusButtons={!canSellHere}
         plusDisabled={state?.plan === 'lifetime'}
-        plusLabel={paymentsLive ? (state ? 'Extend Plus' : 'Get Plus') : 'Buy on WhatsApp'}
+        plusLabel={paymentsLive ? (state ? 'Extend Plus' : 'Get Plus') : UPI.id ? 'Buy with UPI' : 'Buy on WhatsApp'}
       />
 
-      {canSellHere && !paymentsLive && (
+      {upi && <UpiPay plan={upi.plan} username={upi.username} onClose={() => setUpi(null)} />}
+
+      {canSellHere && !paymentsLive && !upi && (
         <section className="card how-to-buy">
           <h2>How buying works</h2>
           <ol>
-            <li>Tap <strong>Buy on WhatsApp</strong>. A message with your plan and username opens.</li>
-            <li>We reply with UPI details. Pay with any UPI app (GPay, PhonePe, Paytm…).</li>
+            {UPI.id ? (
+              <>
+                <li>Tap <strong>Buy with UPI</strong> and pay with any UPI app (GPay, PhonePe, Paytm…).</li>
+                <li>Tap <strong>I've paid</strong>. WhatsApp opens with your order details.</li>
+              </>
+            ) : (
+              <>
+                <li>Tap <strong>Buy on WhatsApp</strong>. A message with your plan and username opens.</li>
+                <li>We reply with UPI details. Pay with any UPI app (GPay, PhonePe, Paytm…).</li>
+              </>
+            )}
             <li>We send your <strong>activation code</strong>, usually within a few hours. Enter it below.</li>
           </ol>
           <p className="muted small">

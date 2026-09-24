@@ -31,6 +31,9 @@ if (!plan || !username) {
 }
 
 console.log(`\nCustomer: ${username}   Plan: ${plan === 'monthly' ? 'Plus Monthly (₹99)' : 'Plus Lifetime (₹2,999)'}`);
+const order = text.match(/Order:\s*(GR[A-Z0-9]+)/i)?.[1];
+const ref = text.match(/UPI reference:\s*([A-Za-z0-9]{6,})/i)?.[1];
+if (order || ref) console.log(`Match this in your UPI app → ${order ? `note contains ${order}` : ''}${order && ref ? ', ' : ''}${ref ? `reference ${ref}` : ''}`);
 const before = readFileSync(CODES_FILE, 'utf8');
 const code = createCode(username, plan);
 if (dry) {

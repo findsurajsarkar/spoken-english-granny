@@ -14,6 +14,15 @@ export const BUSINESS = {
 /** Public web address of the app (used in share messages). */
 export const APP_URL = 'https://findsurajsarkar.github.io/spoken-english-granny/';
 
+/**
+ * UPI payments inside the app. Put your UPI ID here (a business UPI ID is best, e.g. from
+ * PhonePe Business / Paytm for Business / Google Pay for Business). Empty = customers buy on WhatsApp.
+ */
+export const UPI = {
+  id: '',
+  payeeName: 'Spoken English Granny',
+};
+
 /** Direct Android download (sideload APK). Empty = the download button is hidden. */
 export const APK_URL = 'https://github.com/findsurajsarkar/spoken-english-granny/releases/latest/download/spoken-english-granny.apk';
 

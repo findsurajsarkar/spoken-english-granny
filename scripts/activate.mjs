@@ -5,14 +5,14 @@
  *   2. npm run activate
  *   3. Paste the reply (already on your clipboard) into WhatsApp.
  *
- * It reads the clipboard, finds the plan and username, creates the code, publishes it
- * (git commit + push; live in about a minute) and copies the welcome reply to the clipboard.
+ * It reads the clipboard, finds the plan and username, makes a signed activation link (works
+ * instantly, nothing to publish) and copies the welcome reply to the clipboard.
  * You can also pass the message text instead: npm run activate -- "…message…"   (add --dry to test)
  * Only run this AFTER you have seen the money arrive in your bank/UPI app. */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { CODES_FILE, createCode, welcomeMessage } from './plus-lib.mjs';
+import { createLink, welcomeMessage } from './plus-lib.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
@@ -38,28 +38,17 @@ const paidAmount = text.match(/₹\s?([\d,]+)/)?.[1]?.replace(/,/g, '');
 console.log(`\nCustomer: ${username}   Plan: Plus ${plan === 'monthly' ? 'Monthly' : 'Lifetime'} (₹${price.toLocaleString('en-IN')})`);
 if (paidAmount && Number(paidAmount) !== price) console.log(`⚠ The message says ₹${Number(paidAmount).toLocaleString('en-IN')}, but the current price is ₹${price.toLocaleString('en-IN')}. Check the amount you received.`);
 if (/want to buy/i.test(text) && !/have paid/i.test(text)) console.log('ℹ This is an order request, not a payment confirmation. Send UPI details first; activate after the money arrives.');
-const order = text.match(/Order:\s*(GR[A-Z0-9]+)/i)?.[1];
+const orderShown = text.match(/Order:\s*(GR[A-Z0-9]+)/i)?.[1];
 const ref = text.match(/UPI reference:\s*([A-Za-z0-9]{6,})/i)?.[1];
-if (order || ref) console.log(`Match this in your UPI app → ${order ? `note contains ${order}` : ''}${order && ref ? ', ' : ''}${ref ? `reference ${ref}` : ''}`);
-const before = readFileSync(CODES_FILE, 'utf8');
-const code = createCode(username, plan);
+if (orderShown || ref) console.log(`Match this in your UPI app → ${orderShown ? `note contains ${orderShown}` : ''}${orderShown && ref ? ', ' : ''}${ref ? `reference ${ref}` : ''}`);
+const order = text.match(/Order:\s*(GR[A-Z0-9]+)/i)?.[1]?.toUpperCase();
+const link = await createLink(username, plan, order);
+const reply = welcomeMessage(username, plan, link);
 if (dry) {
-  writeFileSync(CODES_FILE, before);
-  console.log(`Code (dry run, not saved): ${code}\n\n${welcomeMessage(username, plan, code)}\n`);
+  console.log(`\n(dry run, nothing copied)\n\n${reply}\n`);
   process.exit(0);
 }
-console.log(`Code: ${code}`);
-
-try {
-  execFileSync('git', ['add', fileURLToPath(CODES_FILE)], { cwd: ROOT });
-  execFileSync('git', ['commit', '-q', '-m', `Plus code: ${username} (${plan})`], { cwd: ROOT });
-  execFileSync('git', ['push', '-q'], { cwd: ROOT, stdio: 'inherit' });
-  console.log('✓ Published. The code works in about 1 minute.');
-} catch (e) {
-  console.error('✗ Could not publish automatically. Run:  git commit -am "Plus code" && git push');
-}
-
-const reply = welcomeMessage(username, plan, code);
 execFileSync('pbcopy', { input: reply });
-console.log('\n✓ Welcome message copied. Paste it into WhatsApp:\n');
+console.log('\n✓ Activation link ready. It works immediately (no publishing).');
+console.log('✓ Welcome message copied. Paste it into WhatsApp:\n');
 console.log(reply + '\n');

@@ -153,9 +153,12 @@ export async function syncNow(): Promise<boolean> {
       ...merged.history.filter((a) => !cloudIds.has(a.id) && a.createdAt >= cutoff).map((a) => store.set(attemptKey(a), a)),
       ...cloud.history.filter((a) => a.createdAt < cutoff).map((a) => store.del(attemptKey(a))),
     ]);
-    await writeSummary(merged);
+    // Anything that changed on this device while we were talking to the cloud (a new practice,
+    // Plus switched on by a link or code…) is merged in again, so it is never overwritten.
+    const final = merge(exportLocal(), merged);
+    await writeSummary(final);
 
-    importLocal({ ...merged, history: merged.history.filter((a) => a.createdAt >= cutoff) });
+    importLocal({ ...final, history: final.history.filter((a) => a.createdAt >= cutoff) });
     if (username) setLocalOwner(username, guest);
     set('saved');
     return true;

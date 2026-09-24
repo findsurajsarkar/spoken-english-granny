@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BUSINESS } from '../config';
 import { track } from '../lib/analytics';
+import { activateWithToken, extractToken } from '../lib/activation';
 import { redeemCode } from '../lib/codes';
 import { buyPlus, paymentsLive } from '../lib/payments';
 import { daysLeft, FREE_DAILY_SESSIONS, PLANS, plusState, PLUS_DAILY_SESSIONS, type PlanId } from '../lib/plan';
@@ -88,8 +89,15 @@ export default function Plus({ username, ensureSignedIn, onChange }: Props) {
       return;
     }
     setChecking(true);
-    const plan = await redeemCode(username, code);
+    // Accepts an activation link (or its token) as well as an 8-character code.
+    const token = extractToken(code);
+    const linkResult = token ? await activateWithToken(token, username) : null;
+    const plan = linkResult ? (linkResult.ok ? linkResult.plan : null) : await redeemCode(username, code);
     setChecking(false);
+    if (linkResult && !linkResult.ok && linkResult.reason === 'wrong-account') {
+      setMsg({ ok: false, text: `This link is for "${linkResult.forUser}", but you're signed in as "${username}".` });
+      return;
+    }
     if (plan) {
       track('plus_redeemed', { plan });
       setCode('');
@@ -249,7 +257,7 @@ export default function Plus({ username, ensureSignedIn, onChange }: Props) {
                 if (code.trim()) redeem();
               }}
             >
-              <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="ABCD-1234" autoCapitalize="characters" aria-label="Activation code" autoFocus />
+              <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Code or activation link" aria-label="Activation code or link" autoFocus />
               <button className="btn primary small" disabled={!code.trim() || checking}>
                 {checking ? 'Checking…' : 'Activate'}
               </button>

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Account from './components/Account';
+import ActivationLink from './components/ActivationLink';
+import Admin from './components/Admin';
 import AccountPage from './components/AccountPage';
 import Badges from './components/Badges';
 import Feedback from './components/Feedback';
@@ -26,6 +28,11 @@ const TABS: Array<{ route: Route; label: string; icon: string }> = [
 
 export default function App() {
   const route = useRoute();
+  // Opened from an activation link (?activate=…): remember it and show the Plus page.
+  const [activation] = useState(() => new URLSearchParams(window.location.search).get('activate'));
+  useEffect(() => {
+    if (activation && (route === '/' || LEGAL_ROUTES.includes(route))) go('/plus');
+  }, [activation, route]);
   const [settings, setSettings] = useState<Settings>(loadSettings);
   const [days, setDays] = useState(loadDays);
   const [history, setHistory] = useState(loadHistory);
@@ -118,7 +125,7 @@ export default function App() {
     return ok;
   }, []);
 
-  if (route === '/') return <Landing />;
+  if (route === '/' && !activation) return <Landing />;
   if (LEGAL_ROUTES.includes(route)) return <Legal route={route} />;
 
   return (
@@ -140,6 +147,7 @@ export default function App() {
       </header>
 
       <RenewalNotice key={String(plus)} />
+      {activation && <ActivationLink token={activation} signedIn={signedIn} onSignIn={handleSignIn} onDone={refresh} />}
 
       <main>
         {route === '/practice' && (
@@ -149,6 +157,7 @@ export default function App() {
         {route === '/badges' && <Badges days={days} />}
         {route === '/history' && <History items={history} />}
         {route === '/feedback' && <Feedback username={username} />}
+        {route === '/admin' && <Admin />}
         {route === '/account' && <AccountPage signedIn={signedIn} username={username} guest={guest} onSignIn={handleSignIn} onSignOut={handleSignOut} />}
         {route === '/plus' && (
           <Plus

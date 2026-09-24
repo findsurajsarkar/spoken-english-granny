@@ -3572,3 +3572,97 @@ a.btn {
   background: var(--gold-soft);
   color: var(--gold);
 }
+
+/* ---------- activation link sheet ---------- */
+.al-sheet {
+  align-items: center;
+  text-align: center;
+  padding-top: 26px;
+}
+
+.al-sheet h2 {
+  font-size: 1.3rem;
+}
+
+.al-sheet p {
+  margin: 0;
+}
+
+.al-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+/* ---------- owner admin page ---------- */
+.admin {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin .card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin .btn.small {
+  align-self: flex-start;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.admin-grid .field:first-child {
+  grid-column: 1 / -1;
+}
+
+.admin select {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font: inherit;
+  background: #fff;
+  color: var(--ink);
+}
+
+.admin .btn.big {
+  margin-top: 0;
+}
+
+.admin-result pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: var(--ui);
+  font-size: 0.85rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 0 0 10px;
+  max-height: 260px;
+  overflow: auto;
+}
+
+.admin-log {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-log li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-log li > div {
+  display: flex;
+  flex-direction: column;
+}

@@ -114,15 +114,17 @@ Until Razorpay is connected:
   "I've paid" and WhatsApp opens with their order number, UPI reference and username.
 - **Without a UPI ID**: "Buy on WhatsApp" opens WhatsApp (+91 88689 69214) with the plan and username.
 
-**After the money has arrived in your bank/UPI app:**
+**After the money has arrived in your bank/UPI app, send a signed activation link** (works instantly):
 
-1. Copy the customer's whole WhatsApp message.
-2. Run `npm run activate` on your Mac. It finds the username and plan, creates the code, publishes it
-   (live in about a minute) and copies a welcome reply with the code to your clipboard.
-3. Paste the reply into WhatsApp.
+- **From your phone:** open your private admin page (`#/admin`, set up once with the link in
+  `~/SpokenEnglishGranny-signing-key/phone-setup-link.txt`), paste the customer's WhatsApp message, tick
+  "I have received …", tap **Create activation link**, then **Share on WhatsApp**.
+- **From the Mac:** copy the message and run `npm run activate`; the reply with the link is copied for you.
 
-Manual alternative: `npm run plus-code -- <username> <monthly|lifetime>`, then `git commit -am "Plus code" && git push`.
-Test without saving anything: `npm run activate -- --dry "<message>"`.
+The customer taps the link and Plus switches on. Links are signed with a private key
+(`~/SpokenEnglishGranny-signing-key/granny-admin-key.json`, never commit it); the app checks them with the
+public key in `src/lib/activationKey.ts`, and each link only works for the username it was made for.
+Old 8-character codes (`npm run plus-code`, `src/plusCodes.ts`) still work.
 
 ## Walkthrough video
 

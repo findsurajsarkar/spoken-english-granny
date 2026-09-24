@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { trackPage } from './analytics';
 
-export type Route = '/' | '/practice' | '/talk' | '/badges' | '/history' | '/plus' | '/account' | '/feedback' | '/privacy' | '/terms' | '/refund' | '/contact';
-const ROUTES: Route[] = ['/', '/practice', '/talk', '/badges', '/history', '/plus', '/account', '/feedback', '/privacy', '/terms', '/refund', '/contact'];
+export type Route = '/' | '/practice' | '/talk' | '/badges' | '/history' | '/plus' | '/account' | '/admin' | '/feedback' | '/privacy' | '/terms' | '/refund' | '/contact';
+const ROUTES: Route[] = ['/', '/practice', '/talk', '/badges', '/history', '/plus', '/account', '/admin', '/feedback', '/privacy', '/terms', '/refund', '/contact'];
 export const LEGAL_ROUTES: Route[] = ['/privacy', '/terms', '/refund', '/contact'];
 
 function current(): Route {
-  const r = window.location.hash.replace(/^#/, '') || '/';
+  // Ignore anything after "?" in the hash (e.g. #/admin?k=…).
+  const r = window.location.hash.replace(/^#/, '').split('?')[0] || '/';
   return (ROUTES as string[]).includes(r) ? (r as Route) : '/';
 }
 

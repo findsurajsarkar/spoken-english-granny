@@ -22,8 +22,9 @@ const COMPARE: Array<{ label: string; free: string | boolean; monthly: string | 
   { label: 'Practices every day', free: String(FREE_DAILY_SESSIONS), monthly: String(PLUS_DAILY_SESSIONS), lifetime: String(PLUS_DAILY_SESSIONS) },
   { label: 'Red-pen corrections & marks', free: true, monthly: true, lifetime: true },
   { label: 'Hindi & Hinglish explanations', free: true, monthly: true, lifetime: true },
-  { label: '3 everyday conversations', free: true, monthly: true, lifetime: true },
-  { label: 'Job interview + 4 more conversations', free: false, monthly: false, lifetime: true },
+  { label: 'Chat with Granny', free: true, monthly: true, lifetime: true },
+  { label: 'Ordering food & shopping conversations', free: false, monthly: true, lifetime: true },
+  { label: 'Job interview, office, doctor, airport & customer-care', free: false, monthly: false, lifetime: true },
   { label: '🎁 Grammar Guide + 30-Day Planner (PDF)', free: false, monthly: false, lifetime: true },
   { label: 'Streaks, badges & history', free: true, monthly: true, lifetime: true },
   { label: 'Price', free: '₹0', monthly: `${rupees(PLANS.monthly.price)}/mo`, lifetime: `${rupees(PLANS.lifetime.price)} once` },
@@ -140,7 +141,7 @@ export default function Plus({ username, ensureSignedIn, onChange }: Props) {
             </>
           ) : (
             <>
-              <li>3 everyday conversations</li>
+              <li>Chat with Granny + ordering food & shopping</li>
               <li>30 days · no auto-renewal</li>
             </>
           )}

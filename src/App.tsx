@@ -136,7 +136,7 @@ export default function App() {
           ))}
         </nav>
         <PlusBadge plus={plus} active={route === '/plus'} />
-        <Account signedIn={signedIn} username={username} guest={guest} onSignIn={handleSignIn} onSignOut={handleSignOut} />
+        <Account signedIn={signedIn} username={username} onSignIn={handleSignIn} />
       </header>
 
       <RenewalNotice key={String(plus)} />
@@ -185,14 +185,14 @@ function PlusBadge({ plus, active }: { plus: boolean; active: boolean }) {
   const left = daysLeft(state);
   if (state?.plan === 'lifetime') {
     return (
-      <button className={`plus-btn member gold${active ? ' on' : ''}`} onClick={() => go('/account')} title="Plus Lifetime member">
+      <button className={`plus-btn member gold${active ? ' on' : ''}`} onClick={() => go('/plus')} title="Plus Lifetime member">
         👑 Lifetime
       </button>
     );
   }
   if (state) {
     return (
-      <button className={`plus-btn member${left !== null && left <= 4 ? ' ending' : ''}${active ? ' on' : ''}`} onClick={() => go('/account')} title="Plus Monthly member">
+      <button className={`plus-btn member${left !== null && left <= 4 ? ' ending' : ''}${active ? ' on' : ''}`} onClick={() => go('/plus')} title="Plus Monthly member">
         ✨ Plus{left !== null && left <= 4 ? ` · ${left}d` : ''}
       </button>
     );

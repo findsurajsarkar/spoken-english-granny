@@ -13,8 +13,8 @@ mistakes are circled, the correction is written above, and each one is explained
 - **Landing page** (`#/`) with how it works, features, pricing and FAQ. Returning learners go straight to the app.
 - **Practice** (`#/practice`): a new AI topic every time for your level (Beginner / Intermediate / Advanced);
   the AI also decides how long you should speak (45 s – 3 min). Speak with the mic or type.
-- **Talk** (`#/talk`): 8 role-play conversations (Chat with Granny, Ordering food, Shopping free;
-  Job interview, Office small talk, Doctor, Airport, Customer care with Plus). Granny reads her replies aloud,
+- **Talk** (`#/talk`): 8 role-play conversations. Free: Chat with Granny · Plus Monthly: + Ordering food, Shopping ·
+  Plus Lifetime: + Job interview, Office small talk, Doctor, Airport, Customer care (set per scenario in `src/lib/scenarios.ts`). Granny reads her replies aloud,
   never interrupts, and marks your English at the end.
 - **Teacher's notebook result**: red circles, handwritten corrections, numbered jargon-free notes
   (English, Hinglish or Hindi), the corrected version with a 🔊 listen button, strengths and a tip.
@@ -28,7 +28,7 @@ mistakes are circled, the correction is written above, and each one is explained
 |---|---|---|---|
 | Price (launch offer) | ₹0 | ₹149 / month (~~₹299~~) | ₹5,999 once (~~₹9,999~~) |
 | Practices a day | 3 | 6 | 6 |
-| Conversations | 3 everyday ones | 3 everyday ones | all 8 (incl. job interview) |
+| Conversations | Chat with Granny | + Ordering food, Shopping | all 8 (incl. job interview) |
 | Free PDFs (Grammar Guide, 30-Day Planner) | – | – | ✓ |
 
 Prices, regular (struck-through) prices and limits live in `src/lib/plan.ts`. Only show a regular price you

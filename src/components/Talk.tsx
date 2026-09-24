@@ -3,7 +3,7 @@ import { hasLiveTranscription, useRecorder, type Recording } from '../hooks/useR
 import type { Badge } from '../lib/badges';
 import { checkAndSave } from '../lib/attempts';
 import { learnerText, nextReply, talkTopic } from '../lib/granny';
-import { canPractise, freeLeftToday, hasAllConversations, isPlus } from '../lib/plan';
+import { canPractise, canUseTier, freeLeftToday, hasAllConversations, isPlus } from '../lib/plan';
 import { transcribe } from '../lib/puter';
 import { go } from '../lib/router';
 import { SCENARIOS, TALK_TURNS, type Scenario } from '../lib/scenarios';
@@ -38,7 +38,7 @@ export default function Talk({ settings, ensureSignedIn, onSaved }: Props) {
   };
 
   const begin = async (scenario: Scenario) => {
-    if (scenario.plus && !allTalks) return go('/plus');
+    if (!canUseTier(scenario.tier)) return go('/plus');
     if (!canPractise()) return show({ name: 'limit' });
     if (!(await ensureSignedIn())) {
       setError('Sign-in was closed. Granny needs you to sign in with Puter to use her AI.');
@@ -102,14 +102,14 @@ export default function Talk({ settings, ensureSignedIn, onSaved }: Props) {
             <p className="free-note">
               {!plus && `${freeLeftToday()} of 3 free practices left today · `}
               <button className="btn link inline" onClick={() => go('/plus')}>
-                Unlock job interview & all conversations with Lifetime 👑
+                {plus ? 'Unlock job interview & all conversations with Lifetime 👑' : 'Unlock more conversations with Plus ✨'}
               </button>
             </p>
           )}
           {error && <p className="error banner">{error}</p>}
           <div className="scenario-grid">
             {SCENARIOS.map((s) => {
-              const locked = s.plus && !allTalks;
+              const locked = !canUseTier(s.tier);
               return (
                 <button key={s.id} className={`scenario${locked ? ' locked' : ''}`} onClick={() => begin(s)}>
                   <span className="sc-emoji" aria-hidden>
@@ -117,7 +117,7 @@ export default function Talk({ settings, ensureSignedIn, onSaved }: Props) {
                   </span>
                   <strong>{s.title}</strong>
                   <span className="muted small">{s.desc}</span>
-                  {locked && <span className="lock">👑 Lifetime</span>}
+                  {locked && <span className={`lock${s.tier === 'lifetime' ? ' gold' : ''}`}>{s.tier === 'lifetime' ? '👑 Lifetime' : '✨ Plus'}</span>}
                 </button>
               );
             })}

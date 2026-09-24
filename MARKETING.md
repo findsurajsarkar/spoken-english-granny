@@ -44,7 +44,7 @@ Practise spoken English with a kind AI granny. Gentle red-pen corrections.
 > • Your progress saved to your account, on every device
 >
 > FREE: 3 practices every day.
-> PLUS MONTHLY: 6 practices a day.
+> PLUS MONTHLY: 6 practices a day, plus ordering-food and shopping conversations.
 > PLUS LIFETIME: 6 practices a day, all 8 conversations including job interview practice, and a free Grammar Guide + 30-Day Speaking Planner.
 >
 > Nobody is watching. Nobody is judging. Just you, Granny, and a little practice every day.

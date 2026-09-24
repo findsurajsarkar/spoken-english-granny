@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { BUSINESS } from '../config';
+import { onSyncState, type SyncState } from '../lib/cloud';
 import { track } from '../lib/analytics';
 import { dailyLimit, daysLeft, FREEBIES, lastPlus, PLANS, plusState, purchases } from '../lib/plan';
 import { go } from '../lib/router';
@@ -14,7 +16,16 @@ interface Props {
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
+const SYNC_TEXT: Record<SyncState, string> = {
+  off: 'Not saved to an account yet',
+  syncing: 'Saving…',
+  saved: 'Progress saved to your account ✓',
+  error: "Couldn't save just now. Granny will try again.",
+};
+
 export default function AccountPage({ signedIn, username, guest, onSignIn, onSignOut }: Props) {
+  const [sync, setSync] = useState<SyncState>('off');
+  useEffect(() => onSyncState(setSync), []);
   const state = plusState();
   const ended = !state ? lastPlus() : null;
   const left = daysLeft(state);
@@ -42,6 +53,7 @@ export default function AccountPage({ signedIn, username, guest, onSignIn, onSig
         <div className="acc-who">
           <strong>{guest ? 'Guest account' : username}</strong>
           <span className="muted small">{guest ? `Username: ${username}` : 'Signed in with Puter'}</span>
+          <span className={`acc-sync sync-${sync}`}>{SYNC_TEXT[sync]}</span>
         </div>
         {state && <span className={`acc-tag${isLifetime ? ' gold' : ''}`}>{isLifetime ? '👑 Lifetime' : '✨ Plus'}</span>}
       </section>
@@ -78,7 +90,7 @@ export default function AccountPage({ signedIn, username, guest, onSignIn, onSig
               <dt>{isLifetime ? 'Valid' : 'Ends on'}</dt>
               <dd>{isLifetime ? 'Forever' : fmtDate(state.until)}</dd>
               <dt>Includes</dt>
-              <dd>{isLifetime ? '6 practices a day · all 8 conversations' : '6 practices a day · 3 everyday conversations'}</dd>
+              <dd>{isLifetime ? '6 practices a day · all 8 conversations' : '6 practices a day · 3 conversations (Granny, food, shopping)'}</dd>
             </dl>
             {left !== null && (
               <>
@@ -103,7 +115,7 @@ export default function AccountPage({ signedIn, username, guest, onSignIn, onSig
           <>
             <p className="acc-plan-name">Free plan</p>
             <p className="muted small">
-              {ended ? `Your ${PLANS[ended.plan].name} ended on ${fmtDate(ended.until)}. ` : ''}3 practices a day and 3 everyday conversations.
+              {ended ? `Your ${PLANS[ended.plan].name} ended on ${fmtDate(ended.until)}. ` : ''}3 practices a day and Chat with Granny.
             </p>
             <button className="btn primary small" onClick={() => go('/plus')}>
               {ended ? 'Renew Plus' : 'See Granny Plus'}

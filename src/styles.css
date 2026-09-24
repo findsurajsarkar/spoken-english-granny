@@ -3567,3 +3567,8 @@ a.btn {
 .gift-icon {
   font-size: 1.6rem;
 }
+
+.lock.gold {
+  background: var(--gold-soft);
+  color: var(--gold);
+}

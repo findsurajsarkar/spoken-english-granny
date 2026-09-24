@@ -87,9 +87,9 @@ const PAGES: Record<string, { title: string; body: ReactNode }> = {
         <p>You sign in with a Puter account (for example, with Google). Keep it secure; you are responsible for what happens in your account.</p>
         <h2>Plans</h2>
         <ul>
-          <li>Free: {FREE_DAILY_SESSIONS} practices a day and 3 everyday conversations.</li>
+          <li>Free: {FREE_DAILY_SESSIONS} practices a day and the Chat with Granny conversation.</li>
           <li>
-            Plus Monthly (₹{PLANS.monthly.price}): {PLUS_DAILY_SESSIONS} practices a day and the 3 everyday conversations, for 30 days from payment. It does not renew
+            Plus Monthly (₹{PLANS.monthly.price}): {PLUS_DAILY_SESSIONS} practices a day and 3 conversations (Chat with Granny, ordering food, shopping), for 30 days from payment. It does not renew
             automatically; buy again to continue.
           </li>
           <li>

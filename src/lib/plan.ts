@@ -17,7 +17,7 @@ export interface Plan {
   regular: number;
   per: string;
   days: number | null;
-  /** Lifetime unlocks all 8 conversations; Monthly keeps the 3 everyday ones. */
+  /** Lifetime unlocks all 8 conversations; Monthly adds ordering food and shopping to Chat with Granny. */
   allConversations: boolean;
   note: string;
 }
@@ -94,6 +94,13 @@ export function isPlus(): boolean {
 /** All 8 conversations are included only with Lifetime. */
 export function hasAllConversations(): boolean {
   return plusState()?.plan === 'lifetime';
+}
+
+/** Free: Chat with Granny · Monthly: + ordering food & shopping · Lifetime: all 8. */
+export function canUseTier(tier: 'free' | 'monthly' | 'lifetime'): boolean {
+  if (tier === 'free') return true;
+  const plan = plusState()?.plan;
+  return tier === 'monthly' ? Boolean(plan) : plan === 'lifetime';
 }
 
 /** Whole days left on a Monthly membership (null for Lifetime or no Plus). */
